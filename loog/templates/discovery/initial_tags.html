@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% load crispy_forms_tags %}
+
+
+<div class="container mx-auto">
+    <div class="alert alert-info mt-3" role="alert">
+        <p class="font-weight-light mt-3" data-toggle="tooltip"></p>
+        <p class="lead" data-toggle="tooltip" data-placement="top">Search for a profile, and add 5 initial tags for it.
+        </p>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12 col-md-12 col-lg-3 pb-4">
+            <div class="card p-4">
+                <form action="discovery/sit/{{user.username}}" method="POST">
+                    {% csrf_token %}
+                    {{ initial_tags_form|crispy }}
+                    <button class="btn btn-primary" type="submit">Submit</button>
+                </form>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-12 col-lg-9 pb-4">
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

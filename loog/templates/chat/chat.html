@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="container">
+    <div class="alert alert-info mt-3" role="alert">
+        <p class="font-weight-light mt-3" data-toggle="tooltip"> Pick a user and start chatting! <br />
+            {{matchingProfiles}}</p>
+    </div>
+    <div class="page-header">
+
+        <p></p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div id="user-list" class="list-group">
+                <a href="" class="list-group-item disabled">
+                    <h5 class="list-group-item-heading">Users</h5>
+                    {# Users go here #}
+                </a>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="panel panel-info bg-light">
+                <div>
+                    <ul id="messages" class="messages">
+                        {# Messages go here #}
+                    </ul>
+                </div>
+                <div class="panel-footer">
+                    <div class="input-group">
+                        <input id="chat-input" type="text" class="form-control input"
+                            placeholder="Type your message here ..." maxlength="500">
+                        <span class="input-group-btn">
+                            <button class="btn btn-info btn" id="btn-send">
+                                Send</button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let sessionKey = '{{ request.session.session_key }}';
+    let currentUser = '{{ request.user.username }}';
+</script>
+<script src="{% static 'app.js' %}"></script>
+
+{% endblock %}

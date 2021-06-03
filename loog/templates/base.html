@@ -1,0 +1,29 @@
+{% load static %}
+<!doctype html>
+<html lang="{{ LANGUAGE_CODE|default:" en-us" }}" dir="{{ LANGUAGE_BIDI|yesno:'rtl,ltr,auto' }}">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Discovery/Chat Application">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="{% static 'style.css' %}" />
+
+  <title>{% block title %}{% endblock %}</title>
+</head>
+
+<body>
+
+  {% include 'header.html' %}
+
+  {% block content %}{% endblock %}
+
+  {% include 'footer.html' %}
+
+</body>
+
+</html>

@@ -1,0 +1,27 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+django = "*"
+mysqlclient = "*"
+djangorestframework = "==3.12.4"
+django-filter = "==2.2.0"
+channels = "==2.4.0"
+channels-redis = "==2.4.2"
+pytz = "*"
+Markdown = "==3.2.1"
+django-crispy-forms = "*"
+
+[dev-packages]
+pdbpp = "*"
+pylint = "*"
+black = "*"
+rope = "*"
+
+[requires]
+python_version = "3.9"
+
+[pipenv]
+allow_prereleases = true

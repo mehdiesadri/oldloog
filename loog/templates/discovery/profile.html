@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+<div class="container">
+    <div class="row">
+        {% for key, value in tags.items reversed %}
+        <div class="col-sm">
+            <p class="text-uppercase mt-3 text-center">{{ key }}</p>
+            <ul class="list-group">
+                {% for tag, count in value.items %}
+                <a href="#" class="list-group-item d-flex justify-content-between align-items-center">{{tag}}
+
+                    {% if count >= 5 %}
+                    <span class="badge badge-danger badge-pill">{{count}}</span>
+                    {% elif count >= 2 %}
+                    <span class="badge badge-warning badge-pill">{{count}}</span>
+                    {% else %}
+                    <span class="badge badge-primary badge-pill">{{count}}</span>
+                    {% endif %}
+
+                </a>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+
+{% endblock %}
