@@ -4,7 +4,6 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from discovery.views import discover
-from discovery.models import Profile
 
 
 def homepage(request):
