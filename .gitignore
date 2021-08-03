@@ -129,8 +129,13 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-*/static
-/static
-./static
+*/static_root
+/static_root
+./static_root
+
+*/media
+/media
+./media
+
 .DS_Store
 
