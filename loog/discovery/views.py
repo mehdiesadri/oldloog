@@ -2,13 +2,28 @@ import operator
 
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .forms import InitialTagsInputForm
+from django.views import generic
+from django.urls import reverse_lazy
+
+from .forms import InitialTagsInputForm, InviteForm
 from .models import Profile, Tag, TagAssignment
 from django.contrib.auth.models import User
 
 
 def index(request):
     return HttpResponse("Hello, world. You're at the discovery index.")
+
+
+class InvitePage(generic.CreateView):
+    template_name = 'discovery/invite.html'
+    form_class = InviteForm
+    success_url = reverse_lazy("discovery:invite")
+
+    def form_valid(self, form):
+        invited = form.save(commit=False)
+        invited.inviter = self.request.user
+        invited.save()
+        return super(InvitePage, self).form_valid(form)
 
 
 def get_profile(request, username):
