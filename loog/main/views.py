@@ -26,10 +26,20 @@ class RegisterPage(SuccessMessageMixin, generic.CreateView):
 
 
 class LoginPage(auth_views.LoginView):
+    """
+    Session-based login.
+    Note: It will redirect to homepage after a successful login.
+    You can change this in settings --> LOGIN_REDIRECT_URL
+    """
     template_name = "main/login.html"
 
 
 class LogoutView(auth_views.LogoutView):
+    """
+    Session-based logout.
+    Note: It will redirect to login page after a successful logout.
+    You can change this in settings --> LOGOUT_REDIRECT_URL
+    """
     pass
 
 
