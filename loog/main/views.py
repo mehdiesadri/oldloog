@@ -15,16 +15,6 @@ class HomePage(generic.TemplateView):
     template_name = "main/main.html"
 
 
-class RegisterPage(SuccessMessageMixin, generic.CreateView):
-    """
-    Creates a new user based on built-in django user model.
-    """
-    template_name = "main/register.html"
-    form_class = UserCreationForm
-    success_url = reverse_lazy('main:login')
-    success_message = _("Your profile was created successfully")
-
-
 class LoginPage(auth_views.LoginView):
     """
     Session-based login.
