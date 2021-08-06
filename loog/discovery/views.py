@@ -16,7 +16,7 @@ def get_profile(request, username):
     profile = Profile.objects.filter(user=user).first()
     tags = {"gived": getGivedTags(profile), "recieved": getRecievedTags(profile)}
     return render(
-        request=request, template_name="discovery/profile.html", context={"tags": tags}
+        request=request, template_name="discovery/profile.html", context={"tags": tags, "profile": profile}
     )
 
 

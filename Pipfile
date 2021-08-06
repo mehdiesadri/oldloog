@@ -13,6 +13,8 @@ channels-redis = "==2.4.2"
 pytz = "*"
 Markdown = "==3.2.1"
 django-crispy-forms = "*"
+pillow = "*"
+factory-boy = "*"
 
 [dev-packages]
 pdbpp = "*"

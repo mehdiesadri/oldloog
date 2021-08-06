@@ -144,3 +144,4 @@ LOGIN_URL = "main:login"
 LOGOUT_URL = "main:logout"
 LOGIN_REDIRECT_URL = "main:homepage"
 LOGOUT_REDIRECT_URL = "main:login"
+PASSWORD_RESET_TIMEOUT_DAYS = 1
