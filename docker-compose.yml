@@ -1,0 +1,38 @@
+version: '3.7'
+
+services: 
+    web:
+        build: ./loog/ 
+        command: gunicorn loog.wsgi:application --bind 0.0.0.0:8000
+        volumes: 
+            - ./loog/:/usr/src/loog/
+            - static_volume:/usr/apps/loog/static
+            - media_volume:/usr/apps/loog/media
+        expose: 
+            - 8000
+        env_file: 
+            - ./.env
+        restart: always
+        depends_on: 
+            - db
+    db:
+        image: mysql:8.0
+        expose: 
+            - 3306
+        restart: always
+        env_file: 
+            - ./.env
+    
+    nginx:
+        build: ./nginx
+        ports:
+            - 1337:80
+        depends_on:
+            - web
+        volumes: 
+            - static_volume:/usr/apps/loog/static
+            - media_volume:/usr/apps/loog/media
+
+volumes: 
+    static_volume:
+    media_volume:
