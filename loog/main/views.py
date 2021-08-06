@@ -1,30 +1,27 @@
 from django.shortcuts import render, redirect
-from .forms import NewUserForm
+from django.views.generic.base import TemplateView
+from django.views.generic import CreateView
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
+from django.urls import reverse_lazy
+
 from discovery.views import discover
 
 
-def homepage(request):
-    return render(request=request, template_name="main/main.html")
+
+class HomePage(TemplateView):
+    template_name = "main/main.html"
 
 
-def register_request(request):
-    if request.method == "POST":
-        form = NewUserForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            messages.success(request, "Registration successful.")
-            return redirect("main:homepage")
-        messages.error(request, "Unsuccessful registration. Invalid information.")
-    form = NewUserForm
-    return render(
-        request=request,
-        template_name="main/register.html",
-        context={"register_form": form},
-    )
+class RegisterPage(SuccessMessageMixin, CreateView):
+    template_name = "main/register.html"
+    form_class = UserCreationForm
+    success_url = reverse_lazy('main:login')
+    success_message = "Your profile was created successfully"
+
 
 
 def login_request(request):
