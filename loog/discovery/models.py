@@ -1,5 +1,4 @@
 import logging
-from uuid import uuid4
 
 from django.contrib.auth import get_user_model
 from django.db import models
@@ -10,6 +9,7 @@ from django.utils.http import urlsafe_base64_encode
 
 from main.tokens import registration_token
 from core.models import DateTimeModel
+from core.utils import send_mail_to
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
@@ -55,11 +55,18 @@ class Profile(DateTimeModel):
         return register_path
 
 
-class InvitedUsers(DateTimeModel):
+class InvitedUser(DateTimeModel):
     inviter = models.ForeignKey(verbose_name=_("Inviter"), to=User, on_delete=models.CASCADE)
     email = models.EmailField(verbose_name=_("Email"))
     is_registered = models.BooleanField(verbose_name=_("Registered"), default=False)
     comma_separated_tags = models.CharField(verbose_name=_("Comma Separated Tags"), max_length=1024)
+
+    def send_invitation_email(self, host_name="https://127.0.0.1:8000"):
+        return send_mail_to(
+            "Invitation Letter",
+            f"You have been invited to Loog Project by {self.inviter}, You register link is: {host_name}{self.inviter.profile.get_invite_link()}",
+            [self.email]
+        )
 
     def __str__(self):
         return f"{self.email} invited by {self.inviter}"

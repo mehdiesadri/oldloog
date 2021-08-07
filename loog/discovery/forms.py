@@ -21,6 +21,10 @@ class InviteForm(forms.ModelForm):
         widget=forms.TextInput(attrs={'data-role': 'tagsinput'})
     )
 
+    email = forms.EmailField(
+        help_text=_("Your invitation link will valid for next 24 hours.")
+    )
+
     def clean_comma_separated_tags(self):
         comma_separated_tags = self.cleaned_data.get("comma_separated_tags", "").split(",")
 
@@ -33,15 +37,12 @@ class InviteForm(forms.ModelForm):
     def clean_email(self):
         email = self.cleaned_data.get("email")
         user_exists = models.User.objects.filter(email=email).exists()
-        invite_exists = models.InvitedUsers.objects.filter(email=email).exists()
 
         if user_exists:
-            raise ValidationError(_("This is email has an account!"), code='invalid')
-        if invite_exists:
-            raise ValidationError(_("You already invited this friend. We will send another email!"), code='invalid')
+            raise ValidationError(_("This email has an account!"), code='invalid')
 
         return email
 
     class Meta:
-        model = models.InvitedUsers
+        model = models.InvitedUser
         fields = ["email", "comma_separated_tags"]

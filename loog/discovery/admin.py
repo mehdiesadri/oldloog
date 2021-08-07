@@ -1,7 +1,7 @@
 from django.contrib import admin
 
-from .models import Profile, Tag, InvitedUsers
+from .models import Profile, Tag, InvitedUser
 
 admin.site.register(Profile)
 admin.site.register(Tag)
-admin.site.register(InvitedUsers)
+admin.site.register(InvitedUser)

@@ -162,3 +162,6 @@ CELERY_BEAT_SCHEDULE = {
         "schedule": crontab(minute="*/1"),
     },
 }
+
+# SMTP
+DEFAULT_FROM_EMAIL = 'test@gmail.com'
