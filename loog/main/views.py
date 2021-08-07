@@ -1,17 +1,15 @@
-from django.contrib.auth import views as auth_views, get_user_model
+from django.contrib.auth import views as auth_views
 
-from django.contrib.messages.views import SuccessMessageMixin
-from django.http import HttpResponse
-from django.shortcuts import render
-from django.urls import reverse_lazy
+from django.http import HttpResponseForbidden
+from django.shortcuts import render, redirect
 from django.utils.translation import gettext_lazy as _
-from django.utils.encoding import force_text
-from django.utils.http import urlsafe_base64_decode
 from django.views import generic
 
+from discovery.models import TagAssignment, Tag
 from discovery.views import discover
 from .tokens import registration_token
 from .forms import RegisterForm
+from .utils import get_invite_obj_from_url
 
 
 class HomePage(generic.TemplateView):
@@ -27,6 +25,7 @@ class LoginPage(auth_views.LoginView):
     Note: It will redirect to homepage after a successful login.
     You can change this in settings --> LOGIN_REDIRECT_URL
     """
+    # TODO: Add Social Auth
     template_name = "main/login.html"
 
 
@@ -40,20 +39,36 @@ class LogoutView(auth_views.LogoutView):
 
 
 class RegisterView(generic.View):
-    def get(self, request, uidb64_inviter_id, token):
-        User = get_user_model()
-        try:
-            uid = force_text(urlsafe_base64_decode(uidb64_inviter_id))
-            inviter = User.objects.get(pk=uid)
-        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-            inviter = None
-
-        if inviter is not None and registration_token.check_token(inviter, token):
-            form = RegisterForm()
+    # TODO: Add social auth
+    def get(self, request, uidb64_invite_id, token):
+        invite_obj = get_invite_obj_from_url(uidb64_invite_id)
+        if invite_obj is not None and registration_token.check_token(invite_obj.inviter, token):
+            form = RegisterForm(
+                initial={'email': invite_obj.email},
+            )
             return render(request, 'main/register.html', context={'form': form})
         else:
-            # invalid link
-            return HttpResponse("Link is NOT OK")
+            return HttpResponseForbidden("Sorry! You don't have access to this link...")
+
+    def post(self, request, uidb64_invite_id, token):
+        invite_obj = get_invite_obj_from_url(uidb64_invite_id)
+        if invite_obj is not None and registration_token.check_token(invite_obj.inviter, token):
+            form = RegisterForm(request.POST)
+            if form.is_valid():
+                # TODO: Atomic Transaction
+                new_user = form.save(commit=True)
+                invite_obj.is_registered = True
+                invite_obj.save()
+
+                for tag in invite_obj.comma_separated_tags.split(","):
+                    TagAssignment.objects.create(
+                        tag=Tag.objects.get_or_create(name=tag)[0],
+                        receiver=new_user,
+                        giver=invite_obj.inviter
+                    )
+                return redirect("main:login")
+        return HttpResponseForbidden(_("Sorry! You don't have access to this link..."))
+
 
 def search(request):
     if request.method == "POST":
