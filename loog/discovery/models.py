@@ -26,7 +26,6 @@ class Tag(models.Model):
 class Profile(DateTimeModel):
     user = models.OneToOneField(to=User, on_delete=models.CASCADE, verbose_name=_("User"))
     avatar = models.ImageField(verbose_name=_("Avatar"), upload_to='user_profiles/', blank=True, null=True)
-    bio = models.TextField(verbose_name=_("Biography"), max_length=256, blank=True, null=True)
     location = models.CharField(verbose_name=_("Location"), max_length=64, blank=True, null=True)
 
     def __str__(self):
