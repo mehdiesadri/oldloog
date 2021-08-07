@@ -23,10 +23,24 @@ class InviteForm(forms.ModelForm):
 
     def clean_comma_separated_tags(self):
         comma_separated_tags = self.cleaned_data.get("comma_separated_tags", "").split(",")
+
         if len(comma_separated_tags) < 5:
-            raise ValidationError(_('At least 5 tags required.'), code='invalid',)
-        initial_tags = [tag.strip() for tag in comma_separated_tags]
+            raise ValidationError(_('At least 5 tags required.'), code='invalid')
+
+        initial_tags = ','.join([tag.strip() for tag in comma_separated_tags])
         return initial_tags
+
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
+        user_exists = models.User.objects.filter(email=email).exists()
+        invite_exists = models.InvitedUsers.objects.filter(email=email).exists()
+
+        if user_exists:
+            raise ValidationError(_("This is email has an account!"), code='invalid')
+        if invite_exists:
+            raise ValidationError(_("You already invited this friend. We will send another email!"), code='invalid')
+
+        return email
 
     class Meta:
         model = models.InvitedUsers
