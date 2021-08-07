@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # Project's Apps
+    'core.apps.CoreConfig',
     "main.apps.MainConfig",
     "discovery.apps.DiscoveryConfig",
     "chat.apps.ChatConfig",

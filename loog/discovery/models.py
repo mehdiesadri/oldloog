@@ -9,18 +9,10 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
 from main.tokens import registration_token
+from core.models import DateTimeModel
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
-
-
-def get_invitation_code() -> str:
-    """
-    Returns a unique six-character code
-    """
-    code = uuid4().hex[:10]
-    logger.info(f"Generated a new invitation code: {code}")
-    return str(code)
 
 
 class Tag(models.Model):
@@ -31,16 +23,11 @@ class Tag(models.Model):
         return self.name
 
 
-class Profile(models.Model):
+class Profile(DateTimeModel):
     user = models.OneToOneField(to=User, on_delete=models.CASCADE, verbose_name=_("User"))
     avatar = models.ImageField(verbose_name=_("Avatar"), upload_to='user_profiles/', blank=True, null=True)
     bio = models.TextField(verbose_name=_("Biography"), max_length=256, blank=True, null=True)
     location = models.CharField(verbose_name=_("Location"), max_length=64, blank=True, null=True)
-
-    tags = models.ManyToManyField(to=Tag, verbose_name=_("Tags"), blank=True)
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return str(self.user)
@@ -68,21 +55,22 @@ class Profile(models.Model):
         return register_path
 
 
-class InvitedUsers(models.Model):
+class InvitedUsers(DateTimeModel):
     inviter = models.ForeignKey(verbose_name=_("Inviter"), to=User, on_delete=models.CASCADE)
     email = models.EmailField(verbose_name=_("Email"))
     is_registered = models.BooleanField(verbose_name=_("Registered"), default=False)
-    initial_tags = models.ManyToManyField(to=Tag, verbose_name=_("Initial tags"))
+    comma_separated_tags = models.CharField(verbose_name=_("Comma Separated Tags"), max_length=1024)
 
     def __str__(self):
         return f"{self.email} invited by {self.inviter}"
 
 
-class TagAssignment(models.Model):
-    tag = models.ForeignKey(Tag, on_delete=models.PROTECT)
+class TagAssignment(DateTimeModel):
+    tag = models.ForeignKey(to=Tag, on_delete=models.PROTECT, verbose_name=_("Tag"))
     giver = models.ForeignKey(
-        Profile, on_delete=models.PROTECT, related_name="reciever"
+        to=User, on_delete=models.PROTECT, related_name="receiver", verbose_name=_("Giver")
     )
-    reciever = models.ForeignKey(Profile, on_delete=models.PROTECT)
-    time = models.DateTimeField(auto_now_add=True)
-    location = models.CharField(max_length=20)
+    receiver = models.ForeignKey(to=User, on_delete=models.PROTECT, verbose_name=_("Receiver"))
+
+    def __str__(self):
+        return f"{self.giver} --> {self.receiver}: {self.tag}"
