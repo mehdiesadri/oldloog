@@ -24,10 +24,22 @@ class Tag(models.Model):
 
 
 class Profile(DateTimeModel):
+    class UserPreferences(models.IntegerChoices):
+        AS_MANY_AS_THERE = 1, _("Ask me as many as there")
+        ALL_BUT_VERY_PICKY = 2, _("All but very picky")
+        ONCE_A_DAY = 3, _("Once a day")
+        MORNINGS_ONLY = 4, _("Mornings only")
+        NOON_ONLY = 5, _("Around noon only")
+        LATE_NIGHT_ONLY = 6, _("Late night only")
+        WEEKENDS_ONLY = 7, _("Weekends only")
+        ONCE_A_WEEK = 8, _("Once a week")
+
     user = models.OneToOneField(to=User, on_delete=models.CASCADE, verbose_name=_("User"))
     avatar = models.ImageField(verbose_name=_("Avatar"), upload_to='user_profiles/', blank=True, null=True)
-    bio = models.TextField(verbose_name=_("Biography"), max_length=256, blank=True, null=True)
     location = models.CharField(verbose_name=_("Location"), max_length=64, blank=True, null=True)
+    birthdate = models.DateField(verbose_name=_("Birthdate"), blank=True, null=True)
+    preferences = models.IntegerField(verbose_name=_("User Preferences"), choices=UserPreferences.choices,
+                                      default=UserPreferences.AS_MANY_AS_THERE)
 
     def __str__(self):
         return str(self.user)
@@ -40,19 +52,9 @@ class Profile(DateTimeModel):
         """
         Indicates whether the profile is completed or not.
         """
-        if self.avatar and self.bio and self.location:
+        if self.avatar and self.birthdate and self.location:
             return True
         return False
-
-    def get_invite_link(self):
-        """
-        Returns relative register path for the invitee.
-        """
-        base64_encoded_id = urlsafe_base64_encode(force_bytes(self.user_id))
-        token = registration_token.make_token(self.user)
-        register_url_args = {'uidb64': base64_encoded_id, 'token': token}
-        register_path = reverse('main:register', kwargs=register_url_args)
-        return register_path
 
 
 class InvitedUser(DateTimeModel):
@@ -67,6 +69,16 @@ class InvitedUser(DateTimeModel):
             f"You have been invited to Loog Project by {self.inviter}, You register link is: {host_name}{self.inviter.profile.get_invite_link()}",
             [self.email]
         )
+
+    def get_invite_link(self):
+        """
+        Returns relative register path for the invitee.
+        """
+        base64_encoded_id = urlsafe_base64_encode(force_bytes(self.id))
+        token = registration_token.make_token(self.inviter)
+        register_url_args = {'uidb64': base64_encoded_id, 'token': token}
+        register_path = reverse('main:register', kwargs=register_url_args)
+        return register_path
 
     def __str__(self):
         return f"{self.email} invited by {self.inviter}"
