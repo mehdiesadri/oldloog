@@ -15,6 +15,7 @@ services:
         restart: always
         depends_on: 
             - db
+            - redis
     db:
         image: mysql:8.0
         expose: 
@@ -22,9 +23,9 @@ services:
         restart: always
         env_file: 
             - ./.env
-    
     nginx:
         build: ./nginx
+        restart: always
         ports:
             - 1337:80
         depends_on:
@@ -32,6 +33,28 @@ services:
         volumes: 
             - static_volume:/usr/apps/loog/static
             - media_volume:/usr/apps/loog/media
+    redis:
+        image: redis:alpine
+    celery:
+        build: ./loog
+        command: celery -A loog worker -l info
+        volumes:
+            - ./loog/:/usr/src/loog/
+        env_file: 
+            - ./.env
+        depends_on: 
+            - redis
+    celery-beat:
+        build: ./loog
+        command: celery -A loog beat -l info
+        volumes:
+            - ./loog/:/usr/src/app/
+        env_file: 
+            - ./.env
+        depends_on:
+            - redis
+
+
 
 volumes: 
     static_volume:

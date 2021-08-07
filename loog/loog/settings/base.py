@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 import os
+from celery.schedules import crontab
+import loog.tasks
 
 from pathlib import Path
 
@@ -144,3 +146,17 @@ LOGIN_URL = "main:login"
 LOGOUT_URL = "main:logout"
 LOGIN_REDIRECT_URL = "main:search"
 LOGOUT_REDIRECT_URL = "main:homepage"
+
+# Celery
+REDIS_HOST = os.environ.get("REDIS_HOST", "localhost")
+REDIS_PORT = os.environ.get("REDIS_PORT", 6379)
+CELERY_BROKER_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}"
+CELERY_RESULT_BACKEND = f"redis://{REDIS_HOST}:{REDIS_PORT}"
+
+# Celery heart beat
+CELERY_BEAT_SCHEDULE = {
+    "sample_task": {
+        "task": "loog.tasks.sample_task",
+        "schedule": crontab(minute="*/1"),
+    },
+}
