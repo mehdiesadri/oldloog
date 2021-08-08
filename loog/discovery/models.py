@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 class Tag(models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=32)
-    value = models.IntegerField(verbose_name=_("Value"), default=-1)
+    _type = models.IntegerField(verbose_name=_("Value"), default=-1)
 
     def __str__(self):
         return self.name

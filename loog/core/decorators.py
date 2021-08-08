@@ -7,6 +7,9 @@ from discovery.utils import check_profile
 
 
 def profile_required(function):
+    """
+    We can put this decorator before @login_required and check if the user can continue or should complete its profile first.
+    """
     @wraps(function)
     def wrap(request, *args, **kwargs):
         profile = request.user.profile
