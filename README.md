@@ -1,6 +1,3 @@
-# loog project
-Put project description here.
-
 ## Quick Start
 1. Clone repository
 2. Change directory to the cloned repository
