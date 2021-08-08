@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 class Tag(models.Model):
     name = models.CharField(verbose_name=_("Name"), max_length=32)
-    value = models.IntegerField(verbose_name=_("Value"), default=-1)
+    _type = models.IntegerField(verbose_name=_("Value"), default=-1)
 
     def __str__(self):
         return self.name
@@ -66,7 +66,7 @@ class InvitedUser(DateTimeModel):
     def send_invitation_email(self, host_name="https://127.0.0.1:8000"):
         return send_mail_to(
             "Invitation Letter",
-            f"You have been invited to Loog Project by {self.inviter}, You register link is: {host_name}{self.inviter.profile.get_invite_link()}",
+            f"You have been invited to Loog Project by {self.inviter}, You register link is: {host_name}{self.get_invite_link()}",
             [self.email]
         )
 
@@ -76,7 +76,7 @@ class InvitedUser(DateTimeModel):
         """
         base64_encoded_id = urlsafe_base64_encode(force_bytes(self.id))
         token = registration_token.make_token(self.inviter)
-        register_url_args = {'uidb64': base64_encoded_id, 'token': token}
+        register_url_args = {'uidb64_invite_id': base64_encoded_id, 'token': token}
         register_path = reverse('main:register', kwargs=register_url_args)
         return register_path
 

@@ -24,9 +24,9 @@
   {% include 'header.html' %}
 
   {% if messages %}
-    <ul class="messages">
+    <ul class="alert alert-block messages">
       {% for message in messages %}
-        <li {% if message.tags %}class="{{ message.tags }}"{% endif %}>
+        <li {% if message.tags %}class="alert-{{ message.tags }}"{% endif %}>
           {{ message }}
         </li>
       {% endfor %}
