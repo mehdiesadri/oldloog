@@ -1,8 +1,13 @@
 import operator
 
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .forms import InitialTagsInputForm
+from django.views import generic
+from django.urls import reverse_lazy
+
+from .forms import InitialTagsInputForm, InviteForm
 from .models import Profile, Tag, TagAssignment
 from django.contrib.auth.models import User
 
@@ -11,12 +16,25 @@ def index(request):
     return HttpResponse("Hello, world. You're at the discovery index.")
 
 
+class InvitePage(SuccessMessageMixin, LoginRequiredMixin, generic.CreateView):
+    template_name = 'discovery/invite.html'
+    form_class = InviteForm
+    success_url = reverse_lazy("discovery:invite")
+    success_message = "You friend successfully invited. We will send him/her an invitation email."
+
+    def form_valid(self, form):
+        invited = form.save(commit=False)
+        invited.inviter = self.request.user
+        invited.save()
+        return super(InvitePage, self).form_valid(form)
+
+
 def get_profile(request, username):
     user = User.objects.filter(username=username).first()
     profile = Profile.objects.filter(user=user).first()
-    tags = {"gived": getGivedTags(profile), "recieved": getRecievedTags(profile)}
+    tags = {"gived": getGivedTags(user), "recieved": getRecievedTags(user)}
     return render(
-        request=request, template_name="discovery/profile.html", context={"tags": tags}
+        request=request, template_name="discovery/profile.html", context={"tags": tags, "profile": profile}
     )
 
 
@@ -78,7 +96,7 @@ def getGivedTags(profile):
 
 
 def getRecievedTags(profile):
-    assignments = TagAssignment.objects.filter(reciever=profile)
+    assignments = TagAssignment.objects.filter(receiver=profile)
     return processTags(assignments)
 
 

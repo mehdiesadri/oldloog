@@ -9,17 +9,20 @@
             {% if user.is_authenticated %}
 
             <li class="nav-item">
-                <a class="nav-link" href="/logout">Logout</a>
+                <a class="nav-link" href="{% url 'main:logout' %}">Logout</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/discovery/profile/{{user.username}}">{{user.username}}</a>
+                <a class="nav-link" href="{% url 'discovery:profile' username=user.username %}">
+                    @{{ user.username }}
+                </a>
             </li>
 
             {% else %}
 
             <li class="nav-item">
-                <a class="nav-link" href="/login">Login</a>
+                <a class="nav-link" href="{% url 'main:login' %}">Login</a>
             </li>
+
 
             {% endif %}
         </ul>

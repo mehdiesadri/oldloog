@@ -1,7 +1,8 @@
-from django.contrib.admin import ModelAdmin, site
+from django.contrib.admin import register, ModelAdmin
 from chat.models import MessageModel
 
 
+@register(MessageModel)
 class MessageModelAdmin(ModelAdmin):
     readonly_fields = ("timestamp",)
     search_fields = ("id", "body", "user__username", "recipient__username")
@@ -9,6 +10,3 @@ class MessageModelAdmin(ModelAdmin):
     list_display_links = ("id",)
     list_filter = ("user", "recipient")
     date_hierarchy = "timestamp"
-
-
-site.register(MessageModel, MessageModelAdmin)

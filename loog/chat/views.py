@@ -8,8 +8,6 @@ from django.contrib.auth.decorators import login_required
 
 @login_required(login_url="/login")
 def start_chat(request, matchingProfiles=None):
-    print("############")
-    print(matchingProfiles)
     return render(
         request=request,
         template_name="chat/chat.html",

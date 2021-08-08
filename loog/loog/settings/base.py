@@ -11,25 +11,22 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 import os
+from celery.schedules import crontab
+import loog.tasks
 
 from pathlib import Path
-from os.path import join
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-a7e+dmk1)n_1n21ccfq&gx&(xhvw!-+z8ej%$708xng8mrc^ko"
+SECRET_KEY = os.environ.get("SECRET_KEY", "this-is-not-secure!")
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
-LOGIN_URL = "/login"
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 
 # Application definition
 
@@ -40,12 +37,15 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # Project's Apps
+    'core.apps.CoreConfig',
+    "main.apps.MainConfig",
+    "discovery.apps.DiscoveryConfig",
+    "chat.apps.ChatConfig",
+    # Third-Party Apps
+    "channels",
     "crispy_forms",
     "rest_framework",
-    "channels",
-    "main",
-    "discovery",
-    "chat",
 ]
 
 MIDDLEWARE = [
@@ -63,7 +63,7 @@ ROOT_URLCONF = "loog.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [join(BASE_DIR, "templates")],
+        "DIRS": [BASE_DIR / 'templates', ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -77,59 +77,38 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "loog.wsgi.application"
+ASGI_APPLICATION = "loog.routing.application"
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
-
-
-# Database
-# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
-}
 
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
-# AUTH_PASSWORD_VALIDATORS = [
-#     {
-#         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
-#     },
-#     {
-#         "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
-#     },
-#     {
-#         "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
-#     },
-#     {
-#         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
-#     },
-# ]
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+    },
+]
 
 
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
-    "PAGE_SIZE": 100,
+    "PAGE_SIZE": 10,
 }
 
 MESSAGES_TO_LOAD = 15
 
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "asgiref.inmemory.ChannelLayer",
-        "ROUTING": "chat.routing.channel_routing",
-    },
-}
-# Could be changed to the config below to scale:
-# "BACKEND": "asgi_redis.RedisChannelLayer",
-# "CONFIG": {
-#     "hosts": [("localhost", 6379)],
-# },
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
@@ -146,42 +125,43 @@ USE_TZ = True
 
 
 # Collect static files here
-STATIC_ROOT = join(BASE_DIR, "run", "static_root")
+STATIC_ROOT = "/usr/apps/loog/static/"
+STATIC_URL = "/static/"
 
 # Collect media files here
-MEDIA_ROOT = join(BASE_DIR, "run", "media_root")
+MEDIA_ROOT = "/usr/apps/loog/media/"
 MEDIA_URL = "/media/"
 
 # look for static assets here
 STATICFILES_DIRS = [
-    join(BASE_DIR, "static"),
-]
-
-STATIC_URL = "/static/"
-
-STATICFILES_DIRS = [
     BASE_DIR / "static",
-    "/var/www/static/",
 ]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-ALLOWED_HOSTS = ["*"]
 
-# Import local_settings.py
-try:
-    from local_settings import *
-except ImportError:
-    pass
+# Login and Logout
+LOGIN_URL = "main:login"
+LOGOUT_URL = "main:logout"
+LOGIN_REDIRECT_URL = "main:homepage"
+LOGOUT_REDIRECT_URL = "main:login"
+PASSWORD_RESET_TIMEOUT_DAYS = 1
 
-ASGI_APPLICATION = "loog.routing.application"
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],
-        },
+# Celery
+REDIS_HOST = os.environ.get("REDIS_HOST", "localhost")
+REDIS_PORT = os.environ.get("REDIS_PORT", 6379)
+CELERY_BROKER_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}"
+CELERY_RESULT_BACKEND = f"redis://{REDIS_HOST}:{REDIS_PORT}"
+
+# Celery heart beat
+CELERY_BEAT_SCHEDULE = {
+    "sample_task": {
+        "task": "loog.tasks.sample_task",
+        "schedule": crontab(minute="*/1"),
     },
 }
+
+# SMTP
+DEFAULT_FROM_EMAIL = 'test@gmail.com'
