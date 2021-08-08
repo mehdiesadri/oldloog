@@ -10,6 +10,7 @@ from django.views import generic
 from django.urls import reverse_lazy
 
 from core.decorators import profile_required
+from core.mixins import ProfileRequiredMixin
 from .forms import InitialTagsInputForm, InviteForm, ProfileForm
 from .models import Profile, Tag, TagAssignment
 from django.contrib.auth.models import User
@@ -21,7 +22,7 @@ def index(request):
     return HttpResponse("Hello, world. You're at the discovery index.")
 
 
-class InvitePage(SuccessMessageMixin, LoginRequiredMixin, generic.CreateView):
+class InvitePage(SuccessMessageMixin, ProfileRequiredMixin, LoginRequiredMixin, generic.CreateView):
     template_name = 'discovery/invite.html'
     form_class = InviteForm
     success_url = reverse_lazy("discovery:invite")
@@ -34,8 +35,8 @@ class InvitePage(SuccessMessageMixin, LoginRequiredMixin, generic.CreateView):
         return super(InvitePage, self).form_valid(form)
 
 
-class ProfileCompletePage(SuccessMessageMixin, LoginRequiredMixin, generic.FormView):
-    template_name = "discovery/profile_complete.html"
+class ProfileUpdatePage(SuccessMessageMixin, LoginRequiredMixin, generic.FormView):
+    template_name = "discovery/profile_update.html"
     model = Profile
     form_class = ProfileForm
     success_url = reverse_lazy("discovery:profile")
@@ -49,9 +50,11 @@ class ProfileCompletePage(SuccessMessageMixin, LoginRequiredMixin, generic.FormV
     def form_valid(self, form):
         form.instance.user = self.request.user
         form.save()
-        return super(ProfileCompletePage, self).form_valid(form)
+        return super(ProfileUpdatePage, self).form_valid(form)
 
 
+@profile_required
+@login_required
 def get_profile(request):
     user = request.user
 
