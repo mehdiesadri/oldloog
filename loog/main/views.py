@@ -1,5 +1,5 @@
 from django.contrib.auth import views as auth_views
-
+from django.db import transaction
 from django.http import HttpResponseForbidden
 from django.shortcuts import render, redirect
 from django.utils.translation import gettext_lazy as _
@@ -55,17 +55,17 @@ class RegisterView(generic.View):
         if invite_obj is not None and registration_token.check_token(invite_obj.inviter, token):
             form = RegisterForm(request.POST)
             if form.is_valid():
-                # TODO: Atomic Transaction
-                new_user = form.save(commit=True)
-                invite_obj.is_registered = True
-                invite_obj.save()
+                with transaction.atomic():
+                    new_user = form.save(commit=True)
+                    invite_obj.is_registered = True
+                    invite_obj.save()
 
-                for tag in invite_obj.comma_separated_tags.split(","):
-                    TagAssignment.objects.create(
-                        tag=Tag.objects.get_or_create(name=tag)[0],
-                        receiver=new_user,
-                        giver=invite_obj.inviter
-                    )
+                    for tag in invite_obj.comma_separated_tags.split(","):
+                        TagAssignment.objects.create(
+                            tag=Tag.objects.get_or_create(name=tag)[0],
+                            receiver=new_user,
+                            giver=invite_obj.inviter
+                        )
                 return redirect("main:login")
         return HttpResponseForbidden(_("Sorry! You don't have access to this link..."))
 

@@ -1,17 +1,22 @@
 import operator
 
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
+from django.utils.translation import gettext_lazy as _
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.views import generic
 from django.urls import reverse_lazy
 
-from .forms import InitialTagsInputForm, InviteForm
+from core.decorators import profile_required
+from .forms import InitialTagsInputForm, InviteForm, ProfileForm
 from .models import Profile, Tag, TagAssignment
 from django.contrib.auth.models import User
 
 
+@profile_required
+@login_required
 def index(request):
     return HttpResponse("Hello, world. You're at the discovery index.")
 
@@ -20,7 +25,7 @@ class InvitePage(SuccessMessageMixin, LoginRequiredMixin, generic.CreateView):
     template_name = 'discovery/invite.html'
     form_class = InviteForm
     success_url = reverse_lazy("discovery:invite")
-    success_message = "You friend successfully invited. We will send him/her an invitation email."
+    success_message = _("You friend successfully invited. We will send him/her an invitation email.")
 
     def form_valid(self, form):
         invited = form.save(commit=False)
@@ -29,8 +34,27 @@ class InvitePage(SuccessMessageMixin, LoginRequiredMixin, generic.CreateView):
         return super(InvitePage, self).form_valid(form)
 
 
-def get_profile(request, username):
-    user = User.objects.filter(username=username).first()
+class ProfileCompletePage(SuccessMessageMixin, LoginRequiredMixin, generic.FormView):
+    template_name = "discovery/profile_complete.html"
+    model = Profile
+    form_class = ProfileForm
+    success_url = reverse_lazy("discovery:profile")
+    success_message = _("You profile successfully updated.")
+    # TODO: Add tag for inviter
+
+    def get_form(self, form_class=ProfileForm):
+        profile = self.request.user.profile
+        return form_class(instance=profile, **self.get_form_kwargs())
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        form.save()
+        return super(ProfileCompletePage, self).form_valid(form)
+
+
+def get_profile(request):
+    user = request.user
+
     profile = Profile.objects.filter(user=user).first()
     tags = {"gived": getGivedTags(user), "recieved": getRecievedTags(user)}
     return render(

@@ -46,3 +46,9 @@ class InviteForm(forms.ModelForm):
     class Meta:
         model = models.InvitedUser
         fields = ["email", "comma_separated_tags"]
+
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = models.Profile
+        fields = ["avatar", "location", "birthdate", "preferences"]
