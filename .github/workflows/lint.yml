@@ -19,4 +19,4 @@ jobs:
           max-line-length: "120"
           path: "./loog"
           exclude: "*/migrations/*"
-          ignore: "F403,F405"
+          ignore: "F403,F405, W503, W504"
