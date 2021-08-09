@@ -16,6 +16,5 @@ jobs:
       - name: flake8 Lint
         uses: py-actions/flake8@v1
         with:
-          max-line-length: "100"
-          path: "loog"
-          exclude: "loog/manage.py, migrations/*"
+          max-line-length: "90"
+          path: "./loog"
