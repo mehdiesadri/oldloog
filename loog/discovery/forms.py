@@ -14,25 +14,29 @@ class InitialTagsInputForm(forms.Form):
     tag5 = forms.CharField(max_length=100)
 
 
-class InviteForm(forms.ModelForm):
+class TagForm(forms.Form):
+    tag_limit = 5
+
     comma_separated_tags = forms.CharField(
         max_length=1024,
         help_text=_("Separate tags by comma, or pressing the enter key."),
         widget=forms.TextInput(attrs={'data-role': 'tagsinput'})
     )
 
-    email = forms.EmailField(
-        help_text=_("Your invitation link will valid for next 24 hours.")
-    )
-
     def clean_comma_separated_tags(self):
         comma_separated_tags = self.cleaned_data.get("comma_separated_tags", "").split(",")
 
-        if len(comma_separated_tags) < 5:
-            raise ValidationError(_('At least 5 tags required.'), code='invalid')
+        if len(comma_separated_tags) < self.tag_limit:
+            raise ValidationError(_(f'At least {self.tag_limit} tags required.'), code='invalid')
 
         initial_tags = ','.join([tag.strip() for tag in comma_separated_tags])
         return initial_tags
+
+
+class InviteForm(forms.ModelForm, TagForm):
+    email = forms.EmailField(
+        help_text=_("Your invitation link will valid for next 24 hours.")
+    )
 
     def clean_email(self):
         email = self.cleaned_data.get("email")
@@ -46,3 +50,13 @@ class InviteForm(forms.ModelForm):
     class Meta:
         model = models.InvitedUser
         fields = ["email", "comma_separated_tags"]
+
+
+class InviteeTagForm(TagForm):
+    user = forms.IntegerField(widget=forms.HiddenInput())
+
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = models.Profile
+        fields = ["avatar", "location", "birthdate", "preferences"]

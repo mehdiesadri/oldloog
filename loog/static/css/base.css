@@ -1,0 +1,13 @@
+ul.messages {
+    list-style-type: none;
+}
+
+ul.messages li {
+    padding: 5px;
+    margin: 5px;
+}
+.alert-error {
+    color: #721c24;
+	background-color: #f8d7da;
+	border-color: #f5c6cb;
+}

@@ -3,6 +3,8 @@ from .base import *
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+MEDIA_ROOT = BASE_DIR / 'media'
+
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
