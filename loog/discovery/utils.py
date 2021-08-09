@@ -1,5 +1,7 @@
 import operator
 
+from django.db.models import Count
+
 from .models import TagAssignment
 
 
@@ -16,13 +18,9 @@ def check_profile(profile):
     return False
 
 
-def get_tag_counts_in_assignments(assignments):
-    # TODO: is there a better approach
-    tags = {}
-    for assignment in assignments:
-        tag = assignment.tag.name
-        if tag not in tags:
-            tags[tag] = 0
-        tags[tag] = tags[tag] + 1
-    sorted_tags = dict(sorted(tags.items(), key=operator.itemgetter(1), reverse=True))
-    return sorted_tags
+def get_tag_counts_in_assignments(assignments) -> dict:
+    annotated_tags = assignments.values_list('tag__name').annotate(total=Count('tag')).order_by('total')
+    tag_counts = {}
+    for tag_name, tag_count in annotated_tags:
+        tag_counts[tag_name] = tag_count
+    return tag_counts
