@@ -18,3 +18,4 @@ jobs:
         with:
           max-line-length: "90"
           path: "./loog"
+          exclude: "*/migrations/*"
