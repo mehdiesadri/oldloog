@@ -66,7 +66,8 @@ class InvitedUser(DateTimeModel):
     def send_invitation_email(self, host_name="https://127.0.0.1:8000"):
         return send_mail_to(
             "Invitation Letter",
-            f"You have been invited to Loog Project by {self.inviter}, You register link is: {host_name}{self.get_invite_link()}",
+            f"You have been invited to Loog Project by {self.inviter}, " +
+            f"You register link is: {host_name}{self.get_invite_link()}",
             [self.email]
         )
 

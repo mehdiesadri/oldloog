@@ -11,3 +11,4 @@ class DiscoveryConfig(AppConfig):
         It's better to import and call signals here.
         """
         from . import signals
+        signals.logger.info("Activated discovery/signals.py")

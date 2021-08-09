@@ -11,14 +11,12 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 import os
-from celery.schedules import crontab
-import loog.tasks
-
 from pathlib import Path
+
+from celery.schedules import crontab
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
@@ -81,7 +79,6 @@ ASGI_APPLICATION = "loog.routing.application"
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
 
-
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
@@ -100,7 +97,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
@@ -108,7 +104,6 @@ REST_FRAMEWORK = {
 }
 
 MESSAGES_TO_LOAD = 15
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
@@ -122,7 +117,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
 
 # Collect static files here
 STATIC_ROOT = "/usr/apps/loog/static/"
