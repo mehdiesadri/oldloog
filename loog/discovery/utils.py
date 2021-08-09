@@ -1,3 +1,5 @@
+import operator
+
 from .models import TagAssignment
 
 
@@ -12,3 +14,15 @@ def check_profile(profile):
     if tag_exists and profile.is_completed:
         return True
     return False
+
+
+def get_tag_counts_in_assignments(assignments):
+    # TODO: is there a better approach
+    tags = {}
+    for assignment in assignments:
+        tag = assignment.tag.name
+        if tag not in tags:
+            tags[tag] = 0
+        tags[tag] = tags[tag] + 1
+    sorted_tags = dict(sorted(tags.items(), key=operator.itemgetter(1), reverse=True))
+    return sorted_tags
