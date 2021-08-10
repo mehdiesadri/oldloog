@@ -10,17 +10,6 @@
 
 {% block content %}
     <div class="container py-5">
-        {% if has_tag_form %}
-            <h1>Inviter's tags</h1>
-            <p>You have been invited by @{{ inviter }}, enter 5 tags that introduce him/her:</p>
-
-            <form action="{% url 'discovery:profile_set_tag' %}" method="POST">
-                {% csrf_token %}
-                {{ tag_form | crispy }}
-                <button class="btn btn-primary" type="submit">Submit</button>
-            </form>
-            <hr>
-        {% endif %}
         <h1>Profile</h1>
         <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
