@@ -10,4 +10,5 @@ urlpatterns = [
     path("register/<str:uidb64_invite_id>/<str:token>/", views.RegisterView.as_view(), name='register'),
     path("profile/", views.ProfileView.as_view(), name="profile"),
     path("profile/update/", views.ProfileUpdateView.as_view(), name="profile_update"),
+    path("invite/", views.InvitePage.as_view(), name="invite"),
 ]

@@ -9,9 +9,9 @@ from django.utils.translation import gettext_lazy as _
 from django.views import generic
 
 from core.mixins import ProfileRequiredMixin
-from discovery.models import TagAssignment, Tag
-from discovery.selectors import get_tag_count
-from .forms import RegisterForm, ProfileForm
+from discovery.models import TagAssignment
+from discovery.selectors import get_tag_count, get_tag_by_name
+from .forms import RegisterForm, ProfileForm, InviteForm
 from .tokens import registration_token
 from .utils import get_invite_obj_from_url
 
@@ -23,7 +23,7 @@ class LoginPage(auth_views.LoginView):
     You can change this in settings --> LOGIN_REDIRECT_URL
     """
     # TODO: Add Social Auth
-    template_name = "main/login.html"
+    template_name = "accounts/login.html"
 
 
 class LogoutView(auth_views.LogoutView):
@@ -43,7 +43,7 @@ class RegisterView(generic.View):
             form = RegisterForm(
                 initial={'email': invite_obj.email},
             )
-            return render(request, 'main/register.html', context={'form': form})
+            return render(request, 'accounts/register.html', context={'form': form})
         else:
             return HttpResponseForbidden("Sorry! You don't have access to this link...")
 
@@ -59,19 +59,26 @@ class RegisterView(generic.View):
 
                     for tag in invite_obj.comma_separated_tags.split(","):
                         TagAssignment.objects.create(
-                            tag=Tag.objects.get_or_create(name=tag)[0],
+                            tag=get_tag_by_name(tag),
                             receiver=new_user,
                             giver=invite_obj.inviter
+                        )
+
+                    for tag in form.cleaned_data.get("comma_separated_tags").split(","):
+                        TagAssignment.objects.create(
+                            tag=get_tag_by_name(tag),
+                            receiver=invite_obj.inviter,
+                            giver=new_user
                         )
                 return redirect("accounts:login")
         return HttpResponseForbidden(_("Sorry! You don't have access to this link..."))
 
 
 class ProfileView(ProfileRequiredMixin, LoginRequiredMixin, generic.TemplateView):
-    template_name = "discovery/profile.html"
+    template_name = "accounts/profile.html"
 
     def get_context_data(self, **kwargs):
-        context = super(ProfilePage, self).get_context_data(**kwargs)
+        context = super(ProfileView, self).get_context_data(**kwargs)
 
         user = self.request.user
         profile = user.profile
@@ -82,7 +89,7 @@ class ProfileView(ProfileRequiredMixin, LoginRequiredMixin, generic.TemplateView
 
 
 class ProfileUpdateView(SuccessMessageMixin, LoginRequiredMixin, generic.FormView):
-    template_name = "discovery/profile_update.html"
+    template_name = "accounts/profile_update.html"
     form_class = ProfileForm
     success_url = reverse_lazy("accounts:profile")
     success_message = _("You profile successfully updated.")
@@ -96,15 +103,15 @@ class ProfileUpdateView(SuccessMessageMixin, LoginRequiredMixin, generic.FormVie
         form.save()
         return super(ProfileUpdateView, self).form_valid(form)
 
-    def get_context_data(self, **kwargs):
-        context = super(ProfileUpdateView, self).get_context_data(**kwargs)
-        if self.request.user.is_superuser or self.request.user.is_staff:
-            return context
 
-        # inviter = get_inviter(self.request.user.email)
-        # context["has_tag_form"] = not is_there_any_tag_assignment(giver=self.request.user, receiver=inviter)
-        # context["inviter"] = inviter
-        # context["tag_form"] = InviteeTagForm(initial={'user': inviter.id})
+class InvitePage(SuccessMessageMixin, ProfileRequiredMixin, LoginRequiredMixin, generic.CreateView):
+    template_name = 'accounts/invite.html'
+    form_class = InviteForm
+    success_url = reverse_lazy("accounts:invite")
+    success_message = _("You friend successfully invited. We will send him/her an invitation email.")
 
-        return context
-
+    def form_valid(self, form):
+        invited = form.save(commit=False)
+        invited.inviter = self.request.user
+        invited.save()
+        return super(InvitePage, self).form_valid(form)
