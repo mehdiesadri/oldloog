@@ -3,6 +3,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 from . import models
+from accounts.models import InvitedUser
 
 
 class InitialTagsInputForm(forms.Form):
@@ -48,15 +49,10 @@ class InviteForm(forms.ModelForm, TagForm):
         return email
 
     class Meta:
-        model = models.InvitedUser
+        model = InvitedUser
         fields = ["email", "comma_separated_tags"]
 
 
 class InviteeTagForm(TagForm):
     user = forms.IntegerField(widget=forms.HiddenInput())
 
-
-class ProfileForm(forms.ModelForm):
-    class Meta:
-        model = models.Profile
-        fields = ["avatar", "location", "birthdate", "preferences"]

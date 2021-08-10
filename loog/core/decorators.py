@@ -19,5 +19,5 @@ def profile_required(function):
             return function(request, *args, **kwargs)
         else:
             messages.add_message(request, messages.ERROR, _("Please complete your profile."))
-            return redirect("discovery:profile_update")
+            return redirect("accounts:profile_update")
     return wrap

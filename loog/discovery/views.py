@@ -8,9 +8,9 @@ from django.utils.translation import gettext_lazy as _
 from django.views import generic
 
 from core.mixins import ProfileRequiredMixin
-from .forms import InitialTagsInputForm, InviteForm, ProfileForm, InviteeTagForm
+from .forms import InitialTagsInputForm, InviteeTagForm, InviteForm
 from .models import TagAssignment
-from .selectors import get_invites_count, get_inviter, is_there_any_tag_assignment, get_tag_count, get_tag_by_name
+from .selectors import get_invites_count, get_tag_count, get_tag_by_name
 
 
 class IndexPage(ProfileRequiredMixin, LoginRequiredMixin, generic.TemplateView):
@@ -35,38 +35,10 @@ class InvitePage(SuccessMessageMixin, ProfileRequiredMixin, LoginRequiredMixin, 
         return context
 
 
-class ProfileUpdatePage(SuccessMessageMixin, LoginRequiredMixin, generic.FormView):
-    template_name = "discovery/profile_update.html"
-    form_class = ProfileForm
-    success_url = reverse_lazy("discovery:profile")
-    success_message = _("You profile successfully updated.")
-
-    def get_form(self, form_class=ProfileForm):
-        profile = self.request.user.profile
-        return form_class(instance=profile, **self.get_form_kwargs())
-
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        form.save()
-        return super(ProfileUpdatePage, self).form_valid(form)
-
-    def get_context_data(self, **kwargs):
-        context = super(ProfileUpdatePage, self).get_context_data(**kwargs)
-        if self.request.user.is_superuser or self.request.user.is_staff:
-            return context
-
-        inviter = get_inviter(self.request.user.email)
-        context["has_tag_form"] = not is_there_any_tag_assignment(giver=self.request.user, receiver=inviter)
-        context["inviter"] = inviter
-        context["tag_form"] = InviteeTagForm(initial={'user': inviter.id})
-
-        return context
-
-
 class InviteeTagPage(SuccessMessageMixin, LoginRequiredMixin, generic.FormView):
     template_name = "discovery/profile_update.html"
     form_class = InviteeTagForm
-    success_url = reverse_lazy("discovery:profile_update")
+    success_url = reverse_lazy("accounts:profile_update")
     success_message = _("Tags updated successfully")
 
     def form_valid(self, form):
@@ -78,20 +50,6 @@ class InviteeTagPage(SuccessMessageMixin, LoginRequiredMixin, generic.FormView):
                     giver=self.request.user
                 )
         return super(InviteeTagPage, self).form_valid(form)
-
-
-class ProfilePage(ProfileRequiredMixin, LoginRequiredMixin, generic.TemplateView):
-    template_name = "discovery/profile.html"
-
-    def get_context_data(self, **kwargs):
-        context = super(ProfilePage, self).get_context_data(**kwargs)
-
-        user = self.request.user
-        profile = user.profile
-        tags = {"gived": get_tag_count(giver=user), "recieved": get_tag_count(receiver=user)}
-        context["tags"] = tags
-        context["profile"] = profile
-        return context
 
 
 def discover(request, username, query):

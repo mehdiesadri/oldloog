@@ -36,8 +36,9 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # Project's Apps
-    'core.apps.CoreConfig',
+    "core.apps.CoreConfig",
     "main.apps.MainConfig",
+    "accounts.apps.AccountsConfig",
     "discovery.apps.DiscoveryConfig",
     "chat.apps.ChatConfig",
     # Third-Party Apps
@@ -137,10 +138,10 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Login and Logout
-LOGIN_URL = "main:login"
-LOGOUT_URL = "main:logout"
+LOGIN_URL = "accounts:login"
+LOGOUT_URL = "accounts:logout"
 LOGIN_REDIRECT_URL = "main:homepage"
-LOGOUT_REDIRECT_URL = "main:login"
+LOGOUT_REDIRECT_URL = "accounts:login"
 PASSWORD_RESET_TIMEOUT_DAYS = 1
 
 # Celery

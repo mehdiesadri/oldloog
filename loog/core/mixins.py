@@ -11,5 +11,5 @@ class ProfileRequiredMixin:
     def dispatch(self, request, *args, **kwargs):
         if not check_profile(request.user.profile):
             messages.add_message(request, messages.ERROR, _("Please complete your profile."))
-            return redirect("discovery:profile_update")
+            return redirect("accounts:profile_update")
         return super().dispatch(request, *args, **kwargs)

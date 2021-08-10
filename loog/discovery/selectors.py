@@ -4,8 +4,9 @@ In this module we put all selects, filters, and fetches from the database.
 """
 import logging
 
+from accounts.models import InvitedUser
 from .utils import get_tag_counts_in_assignments
-from .models import InvitedUser, TagAssignment, Tag
+from .models import TagAssignment, Tag
 
 logger = logging.getLogger(__name__)
 

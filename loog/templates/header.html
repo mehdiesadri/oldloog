@@ -9,10 +9,10 @@
             {% if user.is_authenticated %}
 
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'main:logout' %}">Logout</a>
+                <a class="nav-link" href="{% url 'accounts:logout' %}">Logout</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'discovery:profile' %}">
+                <a class="nav-link" href="{% url 'accounts:profile' %}">
                     @{{ user.username }}
                 </a>
             </li>
@@ -20,7 +20,7 @@
             {% else %}
 
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'main:login' %}">Login</a>
+                <a class="nav-link" href="{% url 'accounts:login' %}">Login</a>
             </li>
 
 
