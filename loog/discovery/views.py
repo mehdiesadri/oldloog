@@ -6,7 +6,3 @@ from core.mixins import ProfileRequiredMixin
 
 class IndexPage(ProfileRequiredMixin, LoginRequiredMixin, generic.TemplateView):
     template_name = 'discovery/index.html'
-
-
-def discover(request, username, query):
-    pass
