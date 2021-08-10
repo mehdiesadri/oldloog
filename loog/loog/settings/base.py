@@ -11,14 +11,12 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 import os
-from celery.schedules import crontab
-import loog.tasks
-
 from pathlib import Path
+
+from celery.schedules import crontab
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
@@ -38,8 +36,9 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # Project's Apps
-    'core.apps.CoreConfig',
+    "core.apps.CoreConfig",
     "main.apps.MainConfig",
+    "accounts.apps.AccountsConfig",
     "discovery.apps.DiscoveryConfig",
     "chat.apps.ChatConfig",
     # Third-Party Apps
@@ -81,7 +80,6 @@ ASGI_APPLICATION = "loog.routing.application"
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
 
-
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
@@ -100,7 +98,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
@@ -108,7 +105,6 @@ REST_FRAMEWORK = {
 }
 
 MESSAGES_TO_LOAD = 15
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
@@ -122,7 +118,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
 
 # Collect static files here
 STATIC_ROOT = "/usr/apps/loog/static/"
@@ -143,10 +138,10 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Login and Logout
-LOGIN_URL = "main:login"
-LOGOUT_URL = "main:logout"
+LOGIN_URL = "accounts:login"
+LOGOUT_URL = "accounts:logout"
 LOGIN_REDIRECT_URL = "main:homepage"
-LOGOUT_REDIRECT_URL = "main:login"
+LOGOUT_REDIRECT_URL = "accounts:login"
 PASSWORD_RESET_TIMEOUT_DAYS = 1
 
 # Celery

@@ -5,7 +5,7 @@
 
 <div class="container">
     <div class="row">
-        <a href="{% url 'discovery:invite' %}">Invite your friends!</a>
+        <a href="{% url 'accounts:invite' %}">Invite your friends!</a>
         {% for key, value in tags.items reversed %}
         <div class="col-sm">
             <p class="text-uppercase mt-3 text-center">{{ key }}</p>
