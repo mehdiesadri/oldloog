@@ -8,11 +8,13 @@ class TagViewSet(mixins.ListModelMixin,
                  mixins.CreateModelMixin,
                  mixins.RetrieveModelMixin,
                  viewsets.GenericViewSet):
+    """CR API of Tag for authenticated users"""
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
 
 
 class TagAssignmentViewSet(viewsets.ModelViewSet):
+    """CRUD API of TagAssignment for admin users"""
     serializer_class = TagAssignmentSerializer
-    permission_classes = [permissions.IsAdminUser, ]
+    permission_classes = (permissions.IsAdminUser, )
     queryset = TagAssignment.objects.all()
