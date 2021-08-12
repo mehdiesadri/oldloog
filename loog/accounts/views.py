@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
@@ -12,6 +13,7 @@ from core.mixins import ProfileRequiredMixin
 from discovery.models import TagAssignment
 from discovery.selectors import get_tag_count, get_tag_by_name
 from .forms import RegisterForm, ProfileForm, InviteForm
+from .selectors import get_invites_count
 from .tokens import registration_token
 from .utils import get_invite_obj_from_url
 
@@ -43,7 +45,7 @@ class RegisterView(generic.View):
             form = RegisterForm(
                 initial={'email': invite_obj.email},
             )
-            return render(request, 'accounts/register.html', context={'form': form})
+            return render(request, 'accounts/register.html', context={'form': form, 'inviter': invite_obj.inviter})
         else:
             return HttpResponseForbidden("Sorry! You don't have access to this link...")
 
@@ -112,6 +114,15 @@ class InvitePage(SuccessMessageMixin, ProfileRequiredMixin, LoginRequiredMixin, 
 
     def form_valid(self, form):
         invited = form.save(commit=False)
-        invited.inviter = self.request.user
-        invited.save()
+        if get_invites_count(self.request.user) <= 4:
+            invited.inviter = self.request.user
+            invited.save()
+        else:
+            messages.error(self.request, message=_("You cannot invite more than 5 friends."))
+            return redirect("accounts:invite")
         return super(InvitePage, self).form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super(InvitePage, self).get_context_data(**kwargs)
+        context['current_invites'] = get_invites_count(self.request.user)
+        return context

@@ -1,15 +1,16 @@
 import logging
 
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.db import models
-from django.utils.translation import gettext_lazy as _
+from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
-from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 
-from .tokens import registration_token
 from core.models import DateTimeModel
 from core.utils import send_mail_to
+from .tokens import registration_token
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
@@ -75,5 +76,3 @@ class InvitedUser(DateTimeModel):
 
     def __str__(self):
         return f"{self.email} invited by {self.inviter}"
-
-

@@ -14,6 +14,7 @@ class RegisterForm(UserCreationForm, TagForm):
     def __init__(self, *args, **kwargs):
         super(RegisterForm, self).__init__(*args, **kwargs)
         self.fields['email'].widget = forms.HiddenInput(attrs={'readonly': True})
+        self.fields['comma_separated_tags'].label = 'Inviter Tags'
 
     class Meta:
         model = User
