@@ -51,6 +51,8 @@ class RegisterView(generic.View):
 
     def post(self, request, uidb64_invite_id, token):
         invite_obj = get_invite_obj_from_url(uidb64_invite_id)
+        print(invite_obj)
+        print(registration_token.check_token(invite_obj.inviter, token))
         if invite_obj is not None and registration_token.check_token(invite_obj.inviter, token):
             form = RegisterForm(request.POST)
             if form.is_valid():
@@ -73,6 +75,9 @@ class RegisterView(generic.View):
                             giver=new_user
                         )
                 return redirect("accounts:login")
+            else:
+                print(form.errors)
+                # TODO: Fix form view
         return HttpResponseForbidden(_("Sorry! You don't have access to this link..."))
 
 

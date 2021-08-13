@@ -28,9 +28,7 @@
   <title>{% block title %}Loog{% endblock %}</title>
 </head>
 
-<body>
-
-  {% include 'header.html' %}
+<body class="bg-default">
 
   {% if messages %}
     <ul class="alert alert-block messages">
@@ -44,7 +42,9 @@
 
   {% block content %}{% endblock %}
 
-  {% include 'footer.html' %}
+  {% comment %} {% include 'footer.html' %} {% endcomment %}
+  
+  
   <!-- Global Base JS -->
   <script src="{% static 'js/base.js' %}"></script>
 
