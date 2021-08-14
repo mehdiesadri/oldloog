@@ -12,7 +12,6 @@ class CreateUserTestCase(TestCase):
             email="test_user@gmail.com",
             password="test1234"
         )
-        return super().setUp()
     
     def test_post_save_signal(self):
         """

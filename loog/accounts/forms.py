@@ -13,8 +13,14 @@ User = get_user_model()
 class RegisterForm(UserCreationForm, TagForm):
     def __init__(self, *args, **kwargs):
         super(RegisterForm, self).__init__(*args, **kwargs)
-        self.fields['email'].widget = forms.HiddenInput(attrs={'readonly': True})
+        self.fields['email'].widget.attrs['readonly'] = True
         self.fields['comma_separated_tags'].label = 'Inviter Tags'
+
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
+        if User.objects.filter(email=email).exists():
+            raise ValidationError(_("This email already exists."))
+        return email
 
     class Meta:
         model = User
