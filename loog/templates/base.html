@@ -7,9 +7,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Discovery/Chat Application">
 
-  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+  <!-- Fonts -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700">
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="{% static 'vendor/nucleo/css/nucleo.css' %}" type="text/css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+  
+  <!-- Global Base CSS -->
   <link rel="stylesheet" href="{% static 'css/base.css' %}" />
+  
+  <!-- Argon CSS -->
+  <link rel="stylesheet" href="{% static 'css/argon.css' %}" type="text/css">
 
 
     {% block css %}
@@ -36,10 +45,18 @@
   {% block content %}{% endblock %}
 
   {% include 'footer.html' %}
-
-  <script src="{% static 'js/jquery.min.js' %}"></script>
-  <script src="{% static 'js/bootstrap.min.js' %}"></script>
+  <!-- Global Base JS -->
   <script src="{% static 'js/base.js' %}"></script>
+
+
+  <!-- Core -->
+  <script src="{% static 'vendor/jquery/dist/jquery.min.js' %}"></script>
+  <script src="{% static 'vendor/bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'vendor/js-cookie/js.cookie.js' %}"></script>
+  <script src="{% static 'vendor/jquery.scrollbar/jquery.scrollbar.min.js' %}"></script>
+  <script src="{% static 'vendor/jquery-scroll-lock/jquery-scrollLock.min.js' %}"></script>
+  <!-- Argon JS -->
+  <script src="{% static 'js/argon.js' %}"></script>
   {% block js %}
 
   {% endblock %}

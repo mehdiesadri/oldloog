@@ -1,0 +1,65 @@
+{% load static %}
+<!doctype html>
+<html lang="{{ LANGUAGE_CODE|default:" en-us" }}" dir="{{ LANGUAGE_BIDI|yesno:'rtl,ltr,auto' }}">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Discovery/Chat Application">
+
+  <!-- Fonts -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700">
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="{% static 'vendor/nucleo/css/nucleo.css' %}" type="text/css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+  
+  <!-- Global Base CSS -->
+  <link rel="stylesheet" href="{% static 'css/base.css' %}" />
+  
+  <!-- Argon CSS -->
+  <link rel="stylesheet" href="{% static 'css/argon.css' %}" type="text/css">
+
+
+    {% block css %}
+
+    {% endblock %}
+
+  <title>{% block title %}Loog{% endblock %}</title>
+</head>
+
+<body class="bg-default">
+
+  {% if messages %}
+    <ul class="alert alert-block messages">
+      {% for message in messages %}
+        <li {% if message.tags %}class="alert-{{ message.tags }}"{% endif %}>
+          {{ message }}
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  {% block content %}{% endblock %}
+
+  {% comment %} {% include 'footer.html' %} {% endcomment %}
+  
+  
+  <!-- Global Base JS -->
+  <script src="{% static 'js/base.js' %}"></script>
+
+
+  <!-- Core -->
+  <script src="{% static 'vendor/jquery/dist/jquery.min.js' %}"></script>
+  <script src="{% static 'vendor/bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'vendor/js-cookie/js.cookie.js' %}"></script>
+  <script src="{% static 'vendor/jquery.scrollbar/jquery.scrollbar.min.js' %}"></script>
+  <script src="{% static 'vendor/jquery-scroll-lock/jquery-scrollLock.min.js' %}"></script>
+  <!-- Argon JS -->
+  <script src="{% static 'js/argon.js' %}"></script>
+  {% block js %}
+
+  {% endblock %}
+</body>
+
+</html>

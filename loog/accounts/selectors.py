@@ -13,7 +13,7 @@ def get_invites_count(inviter) -> int:
     Returns:
         The number of people who invited by this user.
     """
-    return InvitedUser.objects.filter(inviter=inviter).count
+    return InvitedUser.objects.filter(inviter=inviter).count()
 
 
 def get_inviter(user_email: str):
