@@ -8,6 +8,7 @@ done
 
 echo "MySQL started"
 
+python init.py
 python manage.py migrate
 python manage.py collectstatic --no-input --clear
 exec "$@"
