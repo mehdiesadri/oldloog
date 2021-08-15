@@ -49,6 +49,10 @@ class Profile(DateTimeModel):
             return True
         return False
 
+    def get_avatar(self):
+        if self.avatar:
+            return self.avatar.url
+
 
 class InvitedUser(DateTimeModel):
     inviter = models.ForeignKey(verbose_name=_("Inviter"), to=User, on_delete=models.CASCADE)

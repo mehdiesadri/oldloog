@@ -1,4 +1,7 @@
-import time
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from nltk.util import ngrams
+
 from collections import defaultdict
 
 from django.db.models import Count
@@ -16,27 +19,6 @@ def get_tag_counts_in_assignments(assignments) -> dict:
     return tag_counts
 
 
-def get_english_stop_words() -> list:
-    """
-    Returns english stop words.
-    HINT: we can use NLTK library to support different languages.
-    """
-    return ['i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', "you're", "you've", "you'll", "you'd",
-            'your', 'yours', 'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she', "she's", 'her', 'hers',
-            'herself', 'it', "it's", 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves', 'what', 'which',
-            'who', 'whom', 'this', 'that', "that'll", 'these', 'those', 'am', 'is', 'are', 'was', 'were', 'be', 'been',
-            'being', 'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing', 'a', 'an', 'the', 'and', 'but', 'if',
-            'or', 'because', 'as', 'until', 'while', 'of', 'at', 'by', 'for', 'with', 'about', 'against', 'between',
-            'into', 'through', 'during', 'before', 'after', 'above', 'below', 'to', 'from', 'up', 'down', 'in', 'out',
-            'on', 'off', 'over', 'under', 'again', 'further', 'then', 'once', 'here', 'there', 'when', 'where', 'why',
-            'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not',
-            'only', 'own', 'same', 'so', 'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don', "don't",
-            'should', "should've", 'now', 'd', 'll', 'm', 'o', 're', 've', 'y', 'ain', 'aren', "aren't", 'couldn',
-            "couldn't", 'didn', "didn't", 'doesn', "doesn't", 'hadn', "hadn't", 'hasn', "hasn't", 'haven', "haven't",
-            'isn', "isn't", 'ma', 'mightn', "mightn't", 'mustn', "mustn't", 'needn', "needn't", 'shan', "shan't",
-            'shouldn', "shouldn't", 'wasn', "wasn't", 'weren', "weren't", 'won', "won't", 'wouldn', "wouldn't"]
-
-
 def parse_query(query: str) -> list:
     """
     Gets a string and converts it to a list of tokens.
@@ -47,10 +29,11 @@ def parse_query(query: str) -> list:
     Returns:
         List of words with removing stopwords.
     """
-    words = query.split()
-    stop_words = get_english_stop_words()
-    words = [w for w in words if not w.lower() in stop_words]
-    return words
+    words = word_tokenize(query)
+    stop_words = stopwords.words()
+    tokens = [w for w in words if not w.lower() in stop_words]
+    print("tokens\n", tokens)
+    return tokens
 
 
 def generate_ngrams(tokens, n=3):
@@ -65,8 +48,9 @@ def generate_ngrams(tokens, n=3):
         List of ngrams.
     """
     assert (1 < n < 4)
-    ngrams = zip(*[tokens[i:] for i in range(n)])
-    return [" ".join(ngram) for ngram in ngrams]
+    t = ngrams(tokens, 2)
+    print("ngrams (n=2):\n", t)
+    return t
 
 
 def update_inverted_index():
