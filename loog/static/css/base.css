@@ -12,3 +12,10 @@ ul.messages li {
     background-color: #f8d7da;
     border-color: #f5c6cb;
 }
+
+.list-group{
+    max-height: 75%;
+    margin-bottom: 10px;
+    overflow-y:scroll;
+    -webkit-overflow-scrolling: touch;
+}
