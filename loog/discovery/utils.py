@@ -32,7 +32,6 @@ def parse_query(query: str) -> list:
     words = word_tokenize(query)
     stop_words = stopwords.words()
     tokens = [w for w in words if not w.lower() in stop_words]
-    print("tokens\n", tokens)
     return tokens
 
 
@@ -48,9 +47,7 @@ def generate_ngrams(tokens, n=3):
         List of ngrams.
     """
     assert (1 < n < 4)
-    t = ngrams(tokens, 2)
-    print("ngrams (n=2):\n", t)
-    return t
+    return ngrams(tokens, n)
 
 
 def update_inverted_index():
@@ -74,6 +71,7 @@ def find_users(query: str):
     one_grams = parse_query(query)
     two_grams = generate_ngrams(one_grams, n=2)
     three_grams = generate_ngrams(one_grams, n=3)
+    print(one_grams, two_grams, three_grams, sep="\n")
     grams = {
         3: three_grams,
         2: two_grams,
@@ -81,6 +79,7 @@ def find_users(query: str):
     }
     for n, grams in grams.items():
         for gram in grams:
+            gram = ' '.join(gram) if n > 1 else gram
             user_counts = INVERTED_INDEX.get(gram)
             if user_counts:
                 print(f"Fount {n}grams", gram, user_counts)
