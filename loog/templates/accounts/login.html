@@ -1,6 +1,5 @@
 {% extends "base_light.html" %}
 {% load static %}
-{% load socialaccount %}
 {% load crispy_forms_tags %}
 
 {% block title %} Login {% endblock %} 
@@ -42,7 +41,7 @@
                                 <span class="btn-inner--icon"><img src="{% static 'img/icons/common/github.svg' %}"></span>
                                 <span class="btn-inner--text">Github</span>
                             </a>
-                            <a href="{% provider_login_url 'google' %}" class="btn btn-neutral btn-icon">
+                            <a href="#" class="btn btn-neutral btn-icon">
                                 <span class="btn-inner--icon"><img src="{% static 'img/icons/common/google.svg' %}" alt="google-logo"></span>
                                 <span class="btn-inner--text">Google</span>
                             </a>
