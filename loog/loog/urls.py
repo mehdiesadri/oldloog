@@ -24,6 +24,7 @@ urlpatterns = [
     path("discovery/", include("discovery.urls", namespace="discovery")),
     path("chat/", include(("chat.urls", "chat"), namespace="chat")),
     path("accounts/", include("accounts.urls", namespace="accounts")),
+    path('accounts/oauth/', include('allauth.urls')),
     path("api/accounts/", include("accounts.api.routers")),
     path("", include("main.urls", namespace="main")),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) \
