@@ -71,7 +71,6 @@ def find_users(query: str):
     one_grams = parse_query(query)
     two_grams = generate_ngrams(one_grams, n=2)
     three_grams = generate_ngrams(one_grams, n=3)
-    print(one_grams, two_grams, three_grams, sep="\n")
     grams = {
         3: three_grams,
         2: two_grams,
