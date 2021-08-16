@@ -1,34 +1,104 @@
 {% extends "base.html" %}
 
+{% load static %}
+
 {% block content %}
 
 
-<div class="container">
-    <div class="row">
-        <a href="{% url 'accounts:invite' %}">Invite your friends!</a>
-        <a href="{% url 'accounts:profile_update' %}" class="ml-2">Edit your profile!</a>
-        {% for key, value in tags.items reversed %}
-        <div class="col-sm">
-            <p class="text-uppercase mt-3 text-center">{{ key }}</p>
-            <ul class="list-group">
-                {% for tag, count in value.items %}
-                <a href="#" class="list-group-item d-flex justify-content-between align-items-center">{{tag}}
+    <div class="container">
+        <div class="row">
+            <!-- Profile Card -->
+            <div class="col-xl-4 mt-5">
+                <div class="card card-profile">
+                    <img src="{% static 'img/theme/img-1-1000x600.jpg' %}" alt="Image placeholder" class="card-img-top">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-3 order-lg-2">
+                            <div class="card-profile-image">
+                                <a href="{% url 'accounts:profile' %}">
+                                    <img src="{{ profile.get_avatar }}" alt="profile-photo" class="rounded-circle">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-header text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4">
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'accounts:invite' %}" class="btn btn-sm btn-info  mr-4 ">
+                                <span class="fa fa-mail-forward"></span>
+                                Invite
+                            </a>
+                            <a href="{% url 'accounts:profile_update' %}" class="btn btn-sm btn-warning float-right">
+                                <span class="fa fa-pencil"></span>
+                                Edit
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body pt-0">
+                        {% comment %}
+                        <div class="row">
+                            <div class="col">
+                                <div class="card-profile-stats d-flex justify-content-center">
+                                    <div>
+                                        <span class="heading">22</span>
+                                        <span class="description">Friends</span>
+                                    </div>
+                                    <div>
+                                        <span class="heading">10</span>
+                                        <span class="description">Photos</span>
+                                    </div>
+                                    <div>
+                                        <span class="heading">89</span>
+                                        <span class="description">Comments</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endcomment %}
+                        <div class="text-center">
+                            <h5 class="h3">
+                                {{ profile.get_name_or_username }}<span
+                                    class="font-weight-light">, {{ profile.age }}</span>
+                            </h5>
+                            <div class="h5 font-weight-300">
+                                <i class="ni location_pin mr-2"></i>{{ profile.location }}
+                            </div>
+                            <div class="h5 mt-4">
+                                <i class="ni business_briefcase-24 mr-2"></i>{{ profile.user.email }}
+                            </div>
+                            <div>
+                                <i class="ni education_hat mr-2"></i>Preferences: {{ profile.get_preferences }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Tags -->
+            <div class="col-xl-8 ">
+                <div class="row">
+                    {% for key, value in tags.items %}
+                    <div class="col-sm">
+                        <p class="text-uppercase mt-3 text-center">{{ key }}</p>
+                        <ul class="list-group">
+                            {% for tag, count in value.items %}
+                                <a href="#"
+                                   class="list-group-item d-flex justify-content-between align-items-center">{{ tag }}
 
-                    {% if count >= 5 %}
-                    <span class="badge badge-danger badge-pill">{{count}}</span>
-                    {% elif count >= 2 %}
-                    <span class="badge badge-warning badge-pill">{{count}}</span>
-                    {% else %}
-                    <span class="badge badge-primary badge-pill">{{count}}</span>
-                    {% endif %}
+                                    {% if count >= 5 %}
+                                        <span class="badge badge-danger badge-pill">{{ count }}</span>
+                                    {% elif count >= 2 %}
+                                        <span class="badge badge-warning badge-pill">{{ count }}</span>
+                                    {% else %}
+                                        <span class="badge badge-primary badge-pill">{{ count }}</span>
+                                    {% endif %}
 
-                </a>
+                                </a>
+                            {% endfor %}
+                        </ul>
+                    </div>
                 {% endfor %}
-            </ul>
+                </div>
+            </div>
         </div>
-        {% endfor %}
     </div>
-</div>
 
 
 

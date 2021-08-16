@@ -1,7 +1,7 @@
 import logging
+from datetime import date
 
 from django.contrib.auth import get_user_model
-from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
 from django.utils.encoding import force_bytes
@@ -48,6 +48,22 @@ class Profile(DateTimeModel):
         if self.avatar and self.birthdate and self.location:
             return True
         return False
+
+    @property
+    def age(self):
+        if self.is_completed:
+            today = date.today()
+            return today.year - self.birthdate.year - ((today.month, today.day) < (self.birthdate.month, self.birthdate.day))
+
+    def get_avatar(self):
+        if self.avatar:
+            return self.avatar.url
+
+    def get_name_or_username(self):
+        return self.user.get_full_name() or self.user.username
+
+    def get_preferences(self):
+        return self.UserPreferences.choices[self.preferences][1]
 
 
 class InvitedUser(DateTimeModel):
