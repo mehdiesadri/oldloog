@@ -5,8 +5,6 @@
 
     <div class="container">
         <div class="row">
-            <a href="{% url 'accounts:invite' %}">Invite your friends!</a>
-            <a href="{% url 'accounts:profile_update' %}" class="ml-2">Edit your profile!</a>
             {% for key, value in tags.items %}
                 <div class="col-sm">
                     <p class="text-uppercase mt-3 text-center">{{ key }}</p>
