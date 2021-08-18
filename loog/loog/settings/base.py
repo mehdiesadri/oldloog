@@ -147,6 +147,15 @@ LOGIN_REDIRECT_URL = "main:homepage"
 LOGOUT_REDIRECT_URL = "accounts:login"
 PASSWORD_RESET_TIMEOUT_DAYS = 1
 
+# OAuth
+AUTHLIB_OAUTH_CLIENTS = {
+    'google': {
+        'client_id': '149707931788-pa3njrbturb8u6d9nshh9asja7p04mlg.apps.googleusercontent.com',
+        'client_secret': 'pGv_qh9wgFW9YNDnVnEwNvP-'
+    }
+}
+
+
 # Celery
 REDIS_HOST = os.environ.get("REDIS_HOST", "localhost")
 REDIS_PORT = os.environ.get("REDIS_PORT", 6379)

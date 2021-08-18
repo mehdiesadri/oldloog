@@ -12,8 +12,6 @@ User = get_user_model()
 
 class RegisterForm(UserCreationForm, TagForm):
     def __init__(self, *args, **kwargs):
-        sociallogin = kwargs.pop("sociallogin")
-        print(sociallogin)
         super(RegisterForm, self).__init__(*args, **kwargs)
         self.fields['email'].widget.attrs['readonly'] = True
         self.fields['comma_separated_tags'].label = 'Inviter Tags'
