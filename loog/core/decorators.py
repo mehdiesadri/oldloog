@@ -15,6 +15,8 @@ def profile_required(function):
 
     @wraps(function)
     def wrap(request, *args, **kwargs):
+        if request.user.is_superuser:
+            return function(request, *args, **kwargs)
         profile = request.user.profile
         tag_exists = TagAssignment.objects.filter(giver=request.user).exists()
         if profile.is_completed and tag_exists:

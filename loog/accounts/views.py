@@ -1,27 +1,26 @@
 from authlib.integrations.django_client import OAuth
-
 from django.contrib import messages
-from django.contrib.auth import views as auth_views
 from django.contrib.auth import login
+from django.contrib.auth import views as auth_views
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.db import transaction
 from django.http import HttpResponseForbidden
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.utils.translation import gettext_lazy as _
 from django.views import generic
 
 from core.mixins import ProfileRequiredMixin
-from discovery.models import TagAssignment
-from discovery.selectors import get_tag_count, get_tag_by_name, is_there_any_tag_assignment
+
 from discovery.forms import TagForm
+from discovery.models import TagAssignment
+from discovery.selectors import get_tag_count, get_tag_by_name
 
 from .forms import RegisterForm, ProfileForm, InviteForm
-from .selectors import get_invites_count, get_inviter
-from .tokens import registration_token
-from .utils import get_invite_obj_from_url
 from .models import User
+from .selectors import get_invites_count, get_inviter, get_invite_obj_from_url, get_invite_obj_from_inviter_username
+from .services import register_user_with_tags
+from .tokens import registration_token
 
 CONF_URL = 'https://accounts.google.com/.well-known/openid-configuration'
 oauth = OAuth()
@@ -33,17 +32,24 @@ oauth.register(
     }
 )
 
+messages.ERROR = 'danger'
+
 
 def google_login(request):
-    # build a full authorize callback uri
+    """
+    Builds a full authorize callback uri and sets auth_method to login.
+    """
     redirect_uri = request.build_absolute_uri(
-        reverse_lazy('accounts:google_authorize')
+        reverse('accounts:google_authorize')
     )
     request.session['auth_method'] = 'login'
     return oauth.google.authorize_redirect(request, redirect_uri)
 
 
 def google_register(request):
+    """
+    Builds a full authorize callback uri and sets auth_method to register.
+    """
     redirect_uri = request.build_absolute_uri(
         reverse_lazy('accounts:google_authorize')
     )
@@ -56,12 +62,11 @@ def google_register(request):
 def google_authorize(request):
     token = oauth.google.authorize_access_token(request)
     userinfo = oauth.google.parse_id_token(request, token)
-    auth_method = request.session.pop('auth_method')
-    print(auth_method)
-    # Do login here
     email = userinfo.get("email")
+    auth_method = request.session.pop('auth_method')
+
     if email is None:
-        messages.add_message(request, messages.ERROR, _("Google auth failed."))
+        messages.error(request, _("Google auth failed."))
         return redirect('accounts:login')
 
     users = User.objects.filter(email=email)
@@ -83,17 +88,26 @@ def google_authorize(request):
         else:
             invited_email = request.session.pop('invited_email')
             inviter = request.session.pop('inviter')
-            print(inviter, type(inviter))
             if invited_email != email:
                 messages.error(request,
                                _("Can not register with this email address, use password or related social media."))
                 return redirect('main:homepage')
-            print(userinfo)
+
+            invite_obj = get_invite_obj_from_inviter_username(inviter, email)
+            if invite_obj is None:
+                messages.error(request,
+                               _("Sorry, you didn't invite to Loog, if you received an email please call admins."))
+                return redirect('main:homepage')
+
             user = User.objects.create(
                 username=email.split('@')[0],
                 email=email,
                 first_name=userinfo.get('given_name'),
                 last_name=userinfo.get('family_name')
+            )
+            register_user_with_tags(
+                new_user=user,
+                invite_obj=invite_obj
             )
             login(request, user)
 
@@ -119,6 +133,7 @@ class LogoutView(auth_views.LogoutView):
 
 
 class RegisterView(generic.View):
+    # TODO: a cleaner one?
     def get(self, request, uidb64_invite_id, token):
         invite_obj = get_invite_obj_from_url(uidb64_invite_id)
         if invite_obj is not None and registration_token.check_token(invite_obj.inviter, token):
@@ -134,25 +149,13 @@ class RegisterView(generic.View):
         if invite_obj is not None and registration_token.check_token(invite_obj.inviter, token):
             form = RegisterForm(request.POST)
             if form.is_valid():
-                with transaction.atomic():
-                    new_user = form.save(commit=True)
-                    invite_obj.is_registered = True
-                    invite_obj.save()
-
-                    for tag in invite_obj.comma_separated_tags.split(","):
-                        TagAssignment.objects.create(
-                            tag=get_tag_by_name(tag),
-                            receiver=new_user,
-                            giver=invite_obj.inviter
-                        )
-
-                    for tag in form.cleaned_data.get("comma_separated_tags").split(","):
-                        TagAssignment.objects.create(
-                            tag=get_tag_by_name(tag),
-                            receiver=invite_obj.inviter,
-                            giver=new_user
-                        )
-
+                new_user = form.save(commit=True)
+                register_user_with_tags(
+                    new_user=new_user,
+                    invite_obj=invite_obj,
+                    new_user_tags=form.cleaned_data.get("comma_separated_tags")
+                )
+                messages.success(request, "Registered successfully.")
                 return redirect("accounts:login")
             else:
                 return render(request, 'accounts/register.html', context={'form': form, 'inviter': invite_obj.inviter})
