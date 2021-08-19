@@ -1,7 +1,8 @@
 from django.test import TestCase
+from django.urls import resolve
 
 from accounts.models import User, InvitedUser
-from accounts.selectors import get_invites_count, get_inviter
+from accounts.selectors import get_invites_count, get_inviter, get_invite_obj_from_url
 
 
 class InviteUserTestCase(TestCase):
@@ -37,3 +38,11 @@ class InviteUserTestCase(TestCase):
         Checks if function raises correct exception.
         """
         self.assertRaises(InvitedUser.DoesNotExist, get_inviter, user_email="does-not-exists@gmail.com")
+
+    def test_valid_get_invite_obj_from_url(self):
+        link = self.invited_user.get_invite_link()
+        resolved = resolve(link)
+        uid = resolved.kwargs.get("uidb64_invite_id", "fake-uid")
+        inviter = get_invite_obj_from_url(uid)
+        self.assertEqual(inviter, self.invited_user)
+        self.assertEqual(inviter.inviter, self.test_user)

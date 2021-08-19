@@ -19,3 +19,28 @@ ul.messages li {
     overflow-y:scroll;
     -webkit-overflow-scrolling: touch;
 }
+
+.alert-error
+{
+    color: #fff;
+    border-color: #f75676;
+    background-color: #f75676;
+}
+.alert-error a
+{
+    font-weight: 600;
+
+    color: #ac0829;
+}
+.alert-error a:hover
+{
+    color: #fff;
+}
+.alert-error hr
+{
+    border-top-color: #f63e62;
+}
+.alert-error .alert-link
+{
+    color: #ec0c38;
+}

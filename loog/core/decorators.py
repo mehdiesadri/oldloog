@@ -4,6 +4,8 @@ from django.contrib import messages
 from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _
 
+from discovery.models import TagAssignment
+
 
 def profile_required(function):
     """
@@ -13,8 +15,11 @@ def profile_required(function):
 
     @wraps(function)
     def wrap(request, *args, **kwargs):
+        if request.user.is_superuser:
+            return function(request, *args, **kwargs)
         profile = request.user.profile
-        if profile.is_completed:
+        tag_exists = TagAssignment.objects.filter(giver=request.user).exists()
+        if profile.is_completed and tag_exists:
             return function(request, *args, **kwargs)
         else:
             messages.add_message(request, messages.ERROR, _("Please complete your profile."))

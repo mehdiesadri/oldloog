@@ -30,23 +30,17 @@
 
 <body>
 
-{% if messages %}
-    <ul class="alert alert-block messages">
-        {% for message in messages %}
-            <li {% if message.tags %}class="alert-{{ message.tags }}"{% endif %}>
-                {{ message }}
-            </li>
-        {% endfor %}
-    </ul>
-{% endif %}
-
 <div class="main-content" id="panel">
     {% include 'header.html' %}
 
-     <div class="container-fluid">
-         {% block content %}{% endblock %}
-         {% include 'footer.html' %}
-     </div>
+    {% if messages %}
+        {% include 'messages.html' with messages=messages %}
+    {% endif %}
+
+    <div class="container-fluid">
+        {% block content %}{% endblock %}
+        {% include 'footer.html' %}
+    </div>
 </div>
 
 
