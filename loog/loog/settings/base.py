@@ -45,11 +45,7 @@ INSTALLED_APPS = [
     # Third-Party Apps
     "channels",
     "crispy_forms",
-    "rest_framework",
-    "allauth",
-    "allauth.account",
-    "allauth.socialaccount",
-    "allauth.socialaccount.providers.google",
+    "rest_framework"
 ]
 
 MIDDLEWARE = [
@@ -103,31 +99,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
-]
-
 SITE_ID = 1
-
-# Provider specific settings
-SOCIALACCOUNT_PROVIDERS = {
-    'google': {
-        'SCOPE': [
-            'profile',
-            'email',
-        ],
-        'AUTH_PARAMS': {
-            'access_type': 'online',
-        }
-    }
-}
-
-# Additional configuration settings
-# SOCIALACCOUNT_QUERY_EMAIL = True
-# ACCOUNT_LOGOUT_ON_GET = True
-ACCOUNT_UNIQUE_EMAIL = True
-ACCOUNT_EMAIL_REQUIRED = True
 
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
@@ -174,6 +146,15 @@ LOGOUT_URL = "accounts:logout"
 LOGIN_REDIRECT_URL = "main:homepage"
 LOGOUT_REDIRECT_URL = "accounts:login"
 PASSWORD_RESET_TIMEOUT_DAYS = 1
+
+# OAuth
+AUTHLIB_OAUTH_CLIENTS = {
+    'google': {
+        'client_id': '149707931788-pa3njrbturb8u6d9nshh9asja7p04mlg.apps.googleusercontent.com',
+        'client_secret': 'pGv_qh9wgFW9YNDnVnEwNvP-'
+    }
+}
+
 
 # Celery
 REDIS_HOST = os.environ.get("REDIS_HOST", "localhost")
