@@ -9,7 +9,7 @@ RUN pip install --upgrade pip
 COPY ./requirements.txt .
 
 RUN apk add py-cryptography
-RUN apk add gcc musl-dev libffi-dev openssl-dev python3-dev
+RUN apk add gcc musl-dev libffi-dev openssl-dev python3-dev zlib-dev jpeg-dev
 RUN apk add build-base mysql-dev bash cargo
 
 RUN pip install -r requirements.txt
