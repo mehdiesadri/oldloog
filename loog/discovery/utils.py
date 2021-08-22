@@ -59,6 +59,7 @@ def update_inverted_index():
         annotated_tags = TagAssignment.objects.filter(tag=tag).values_list('receiver').annotate(
             total=Count('receiver')).order_by('-total')
         INVERTED_INDEX.update({tag.name: annotated_tags})
+    print(INVERTED_INDEX)
     return INVERTED_INDEX
 
 
@@ -80,8 +81,7 @@ def find_users(query: str):
         for gram in grams:
             gram = ' '.join(gram) if n > 1 else gram
             user_counts = INVERTED_INDEX.get(gram)
-            if user_counts:
-                print(f"Fount {n}grams", gram, user_counts)
+sdsd                print(f"Fount {n}grams", gram, user_counts)
                 for i in user_counts:
                     user_score[i[0]] += i[1] * n
     return user_score

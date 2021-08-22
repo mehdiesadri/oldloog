@@ -14,7 +14,7 @@ import os
 from pathlib import Path
 
 from celery.schedules import crontab
-from loog.tasks import debug_task
+import loog.tasks
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -172,4 +172,4 @@ CELERY_BEAT_SCHEDULE = {
 }
 
 # SMTP
-DEFAULT_FROM_EMAIL = 'test@gmail.com'
+DEFAULT_FROM_EMAIL = 'loogtest0@gmail.com'
