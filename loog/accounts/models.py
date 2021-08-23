@@ -9,7 +9,7 @@ from django.utils.http import urlsafe_base64_encode
 from django.utils.translation import gettext_lazy as _
 
 from core.models import DateTimeModel
-from core.utils import send_mail_to
+from core.tasks import send_email
 from .tokens import registration_token
 
 User = get_user_model()
@@ -73,7 +73,7 @@ class InvitedUser(DateTimeModel):
     comma_separated_tags = models.CharField(verbose_name=_("Comma Separated Tags"), max_length=1024)
 
     def send_invitation_email(self, host_name="127.0.0.1:8000"):
-        return send_mail_to(
+        return send_email.delay(
             "Invitation Letter",
             f"You have been invited to Loog Project by {self.inviter}, "
             + f"You register link is: {host_name}{self.get_invite_link()}",

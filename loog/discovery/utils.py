@@ -1,14 +1,24 @@
+import redis
+import pickle
+import logging
+import pytz
+from datetime import datetime
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.util import ngrams
-
 from collections import defaultdict
 
 from django.db.models import Count
+from django.conf import settings
 
 from .models import TagAssignment, Tag
 
-INVERTED_INDEX = {}
+logger = logging.getLogger(__name__)
+redis_db = redis.Redis(
+    host=settings.REDIS_HOST,
+    port=settings.REDIS_PORT,
+    db=2
+    )
 
 
 def get_tag_counts_in_assignments(assignments) -> dict:
@@ -46,28 +56,23 @@ def generate_ngrams(tokens, n=3):
     Returns:
         List of ngrams.
     """
-    assert (1 < n < 4)
+    assert (1 < n < 4), "n can only be 2 or 3"
     return ngrams(tokens, n)
 
 
 def update_inverted_index():
-    # TODO: Celery every 5 minutes.
     # key: tag, value: {(user, count),...}
-    global INVERTED_INDEX
+    last_update = redis_db.get("INVERTED_INDEX_UPDATED_DATETIME").decode('utf-8')
+    last_update = datetime.strptime(last_update, "%m/%d/%Y, %H:%M:%S")
+    last_update = last_update.replace(tzinfo=pytz.UTC)
     all_tags = Tag.objects.all()
     for tag in all_tags:
-        annotated_tags = TagAssignment.objects.filter(tag=tag).values_list('receiver').annotate(
+        annotated_tags = TagAssignment.objects.filter(tag=tag, updated_at__gt=last_update).values_list('receiver').annotate(
             total=Count('receiver')).order_by('-total')
-        INVERTED_INDEX.update({tag.name: annotated_tags})
-    print(INVERTED_INDEX)
-    return INVERTED_INDEX
+        redis_db.set(str(tag.name), pickle.dumps(annotated_tags))
 
 
 def find_users(query: str):
-    # TODO: Remove update after celery
-    global INVERTED_INDEX
-    update_inverted_index()
-
     user_score = defaultdict(int)
     one_grams = parse_query(query)
     two_grams = generate_ngrams(one_grams, n=2)
@@ -80,8 +85,11 @@ def find_users(query: str):
     for n, grams in grams.items():
         for gram in grams:
             gram = ' '.join(gram) if n > 1 else gram
-            user_counts = INVERTED_INDEX.get(gram)
-sdsd                print(f"Fount {n}grams", gram, user_counts)
-                for i in user_counts:
-                    user_score[i[0]] += i[1] * n
+            in_redis = redis_db.get(gram)
+            if in_redis is None:
+                logger.info(f"{gram} is not in redis.")
+                continue   
+            user_counts = pickle.loads(in_redis)
+            for i in user_counts:
+                user_score[i[0]] += i[1] * n
     return user_score
