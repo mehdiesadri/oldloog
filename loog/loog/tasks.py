@@ -6,5 +6,5 @@ logger = get_task_logger(__name__)
 
 
 @shared_task
-def sample_task():
-    logger.info("The sample task just ran.")
+def debug_task():
+    logger.info("Celery debug task executed. This runs every minute!")

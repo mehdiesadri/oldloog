@@ -22,5 +22,4 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=InvitedUser)
 def invite_user(sender, instance, created, **kwargs):
     if created or not instance.is_registered:
-        # TODO: Do this with Celery
         instance.send_invitation_email()

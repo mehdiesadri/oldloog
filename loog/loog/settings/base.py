@@ -14,6 +14,7 @@ import os
 from pathlib import Path
 
 from celery.schedules import crontab
+import loog.tasks
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -165,10 +166,10 @@ CELERY_RESULT_BACKEND = f"redis://{REDIS_HOST}:{REDIS_PORT}"
 # Celery heart beat
 CELERY_BEAT_SCHEDULE = {
     "sample_task": {
-        "task": "loog.tasks.sample_task",
+        "task": "loog.tasks.debug_task",
         "schedule": crontab(minute="*/1"),
     },
 }
 
 # SMTP
-DEFAULT_FROM_EMAIL = 'test@gmail.com'
+DEFAULT_FROM_EMAIL = 'loogtest0@gmail.com'

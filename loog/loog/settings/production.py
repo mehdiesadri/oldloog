@@ -5,7 +5,6 @@ DEBUG = False
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-# TODO: Use MySQL Config for production!
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
@@ -29,13 +28,12 @@ CHANNEL_LAYERS = {
 
 # SMTP: For sending email to users
 # https://docs.djangoproject.com/en/3.2/topics/email/
-# TODO: Setup SMTP before production.
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = DEFAULT_FROM_EMAIL
-EMAIL_HOST_PASSWORD = 'password'
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD', 'wrong-password')
 
 # Cache
 CACHES = {
