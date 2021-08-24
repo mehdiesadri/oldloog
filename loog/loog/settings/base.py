@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     # Third-Party Apps
     "channels",
     "crispy_forms",
-    "rest_framework"
+    "rest_framework",
+    "webpush"
 ]
 
 MIDDLEWARE = [
@@ -173,3 +174,12 @@ CELERY_BEAT_SCHEDULE = {
 
 # SMTP
 DEFAULT_FROM_EMAIL = 'loogtest0@gmail.com'
+
+# https://www.digitalocean.com/community/tutorials/how-to-send-web-push-notifications-from-django-applications
+# https://web-push-codelab.glitch.me/
+
+WEBPUSH_SETTINGS = {
+   "VAPID_PUBLIC_KEY": "BItDtGwdGRnST9VhBeMR5ZnSbCej3hxwVBUyr5f5AF-lHQU6hr1s7d_1lHbLGBUKqoXasEqbIYgeqOuKOC9SCF4",
+   "VAPID_PRIVATE_KEY": "k5Sdm4d-rAGj55i2icchhcYEiVenXPdg368_zWofa4o",
+   "VAPID_ADMIN_EMAIL": "loogtest0@gmail.com"
+}

@@ -25,6 +25,7 @@ urlpatterns = [
     path("chat/", include(("chat.urls", "chat"), namespace="chat")),
     path("accounts/", include("accounts.urls", namespace="accounts")),
     path("api/accounts/", include("accounts.api.routers")),
+    path("webpush/", include("webpush.urls")),
     path("", include("main.urls", namespace="main")),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) \
               + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
