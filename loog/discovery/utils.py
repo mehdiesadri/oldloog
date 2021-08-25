@@ -5,7 +5,7 @@ import pytz
 from datetime import datetime
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
-from nltk.util import ngrams
+from nltk.util import ngrams, pr
 from collections import defaultdict
 
 from django.db.models import Count
@@ -62,9 +62,14 @@ def generate_ngrams(tokens, n=3):
 
 def update_inverted_index():
     # key: tag, value: {(user, count),...}
-    last_update = redis_db.get("INVERTED_INDEX_UPDATED_DATETIME").decode('utf-8')
-    last_update = datetime.strptime(last_update, "%m/%d/%Y, %H:%M:%S")
-    last_update = last_update.replace(tzinfo=pytz.UTC)
+    last_update = None # redis_db.get("INVERTED_INDEX_UPDATED_DATETIME")
+    if last_update is not None:
+        last_update = last_update.decode('utf-8')
+        last_update = datetime.strptime(last_update, "%m/%d/%Y, %H:%M:%S")
+        last_update = last_update.replace(tzinfo=pytz.UTC)
+    else:
+        last_update = datetime(year=1900, month=1, day=1, tzinfo=pytz.UTC)
+
     all_tags = Tag.objects.all()
     for tag in all_tags:
         annotated_tags = TagAssignment.objects.filter(tag=tag, updated_at__gt=last_update).values_list('receiver').annotate(

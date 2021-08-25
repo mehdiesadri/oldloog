@@ -19,6 +19,8 @@ services:
             - redis
     db:
         image: mysql:8.0
+        cap_add:
+            - SYS_NICE
         expose: 
             - 3306
         restart: always

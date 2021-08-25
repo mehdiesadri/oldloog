@@ -166,7 +166,7 @@ CELERY_RESULT_BACKEND = f"redis://{REDIS_HOST}:{REDIS_PORT}"
 
 # Celery heart beat
 CELERY_BEAT_SCHEDULE = {
-    "sample_task": {
+    "debug_task": {
         "task": "loog.tasks.debug_task",
         "schedule": crontab(minute="*/1"),
     },
