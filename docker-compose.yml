@@ -3,6 +3,7 @@ version: '3.7'
 services: 
     web:
         build: ./loog/ 
+        entrypoint: ./entrypoint.sh
         command: gunicorn loog.wsgi:application --bind 0.0.0.0:8000
         volumes: 
             - ./loog/:/usr/src/loog/
@@ -27,7 +28,7 @@ services:
         build: ./nginx
         restart: always
         ports:
-            - 1337:80
+            - 80:80
         depends_on:
             - web
         volumes: 
