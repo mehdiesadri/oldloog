@@ -5,10 +5,12 @@ from rest_framework import serializers
 
 
 class MessageSerializer(serializers.ModelSerializer):
+    avatar = serializers.ReadOnlyField(source="sender.profile.get_avatar")
+    
     class Meta:
         model = Message
-        fields = ("id", "sender", "session", "text", "attachment", )
-        readonly_fields = ("id", "sender", "session", )
+        fields = ("id", "sender", "session", "text", "attachment", "created_at", "avatar", )
+        read_only_fields = ("id", "sender", "session", "created_at", "avatar", )
 
 
 class UserModelSerializer(serializers.ModelSerializer):

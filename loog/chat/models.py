@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
@@ -26,6 +27,10 @@ class ChatSessionUser(DateTimeModel):
 
     def __str__(self) -> str:
         return f"{self.user} | {self.session}"
+    
+    def get_absolute_url(self):
+        return reverse("chat:session", kwargs={"room_name": self.session.room_name})
+    
 
 
 class Message(DateTimeModel):

@@ -6,5 +6,6 @@ app_name = "chat"
 
 
 urlpatterns = [
-    path("", views.start_chat, name="chat"),
+    path("history/", views.ChatSessionList.as_view(), name="user-session-list"),
+    path("<str:room_name>/", views.ChatSession.as_view(), name="session")
 ]
