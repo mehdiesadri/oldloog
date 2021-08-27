@@ -16,10 +16,10 @@
     <div class="row">
         <div class="col-md-4">
             <div id="user-list" class="list-group">
-                <a href="" class="list-group-item disabled">
-                    <h5 class="list-group-item-heading">Users</h5>
-                    {# Users go here #}
-                </a>
+                <h5 class="list-group-item-heading">Sessions</h5>
+                    {% for user_session in user_sessions %}
+                        <button class="list-group-item" class="btn btn-primary" onclick="set_session('{{ user_session.session.room_name }}');">{{ user_session.session.query }}</button>
+                    {% endfor %}
             </div>
         </div>
         <div class="col-md-8">
@@ -31,10 +31,10 @@
                 </div>
                 <div class="panel-footer">
                     <div class="input-group">
-                        <input id="chat-input" type="text" class="form-control input"
+                        <input id="chat_text" type="text" class="form-control input"
                             placeholder="Type your message here ..." maxlength="500">
                         <span class="input-group-btn">
-                            <button class="btn btn-info btn" id="btn-send">
+                            <button class="btn btn-info btn" onclick="send_message();">
                                 Send</button>
                         </span>
                     </div>
@@ -48,6 +48,6 @@
     let sessionKey = '{{ request.session.session_key }}';
     let currentUser = '{{ request.user.username }}';
 </script>
-<script src="{% static 'app.js' %}"></script>
+<script src="{% static 'js/chat.js' %}"></script>
 
 {% endblock %}

@@ -23,6 +23,7 @@ urlpatterns = [
     path("api/discovery/", include("discovery.api.routers")),
     path("discovery/", include("discovery.urls", namespace="discovery")),
     path("chat/", include(("chat.urls", "chat"), namespace="chat")),
+    path("api/chat/", include("chat.api.routers")),
     path("accounts/", include("accounts.urls", namespace="accounts")),
     path("api/accounts/", include("accounts.api.routers")),
     path("webpush/", include("webpush.urls")),

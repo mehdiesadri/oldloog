@@ -8,8 +8,8 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.authentication import SessionAuthentication
 
-from chat.serializers import MessageModelSerializer, UserModelSerializer
-from chat.models import MessageModel
+from .serializers import MessageSerializer, UserModelSerializer
+from chat.models import Message
 
 
 class CsrfExemptSessionAuthentication(SessionAuthentication):
@@ -32,8 +32,8 @@ class MessagePagination(PageNumberPagination):
 
 
 class MessageModelViewSet(ModelViewSet):
-    queryset = MessageModel.objects.all()
-    serializer_class = MessageModelSerializer
+    queryset = Message.objects.all()
+    serializer_class = MessageSerializer
     allowed_methods = ("GET", "POST", "HEAD", "OPTIONS")
     authentication_classes = (CsrfExemptSessionAuthentication,)
     pagination_class = MessagePagination

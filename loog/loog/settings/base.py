@@ -172,6 +172,18 @@ CELERY_BEAT_SCHEDULE = {
     },
 }
 
+
+# Django Channels
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [(REDIS_HOST, REDIS_PORT)],
+        },
+    },
+}
+
+
 # SMTP
 DEFAULT_FROM_EMAIL = 'loogtest0@gmail.com'
 

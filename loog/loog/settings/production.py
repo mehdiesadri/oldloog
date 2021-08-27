@@ -16,15 +16,6 @@ DATABASES = {
     }
 }
 
-# Django Channels (Use Redis for production)
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [(REDIS_HOST, REDIS_PORT)],
-        },
-    },
-}
 
 # SMTP: For sending email to users
 # https://docs.djangoproject.com/en/3.2/topics/email/
