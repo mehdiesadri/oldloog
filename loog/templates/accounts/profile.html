@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% load static %}
+{% load webpush_notifications %}
 
 {% block content %}
 
@@ -54,6 +55,7 @@
                         </div>
                         {% endcomment %}
                         <div class="text-center">
+                            {% webpush_button with_class="btn btn-outline-info" %}
                             <h5 class="h3">
                                 {{ profile.get_name_or_username }}<span
                                     class="font-weight-light">, {{ profile.age }}</span>
