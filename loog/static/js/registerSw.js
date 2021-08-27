@@ -1,33 +1,16 @@
-const showNotAllowed = (message) => {
-    console.log("Push notifications not supported!");
-    console.log(message);
-};
+// https://www.digitalocean.com/community/tutorials/how-to-send-web-push-notifications-from-django-applications
 
-
-function urlB64ToUnit8Array(base64String) {
-    const padding = '='.repeat((4 - base64String.length % 4) % 4);
-    const base64 = (base64String + padding)
-        .replace(/\-/g, '+')
-        .replace(/_/g, '/');
-
-    const rawData = window.atob(base64);
-    const outputArray = new Uint8Array(rawData.length);
-    return outputArray.map((output, index) => rawData.charCodeAt(index));
-}
-
-
-const registerSw = async () => {
+const registerSw = async() => {
     if ('serviceWorker' in navigator) {
-        const reg = await navigator.serviceWorker.register('/static/js/sw.js');
-        initialiseState(reg)
+        const reg = await navigator.serviceWorker.register('sw.js');
+        initializeState(reg)
 
     } else {
         showNotAllowed("You can't send push notifications ☹️😢")
     }
 };
 
-
-const initialiseState = (reg) => {
+const initializeState = (reg) => {
     if (!reg.showNotification) {
         showNotAllowed('Showing notifications isn\'t supported ☹️😢');
         return
@@ -43,7 +26,24 @@ const initialiseState = (reg) => {
     subscribe(reg);
 }
 
-const subscribe = async (reg) => {
+const showNotAllowed = (message) => {
+    console.error(message);
+};
+
+function urlB64ToUint8Array(base64String) {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding)
+        .replace(/\-/g, '+')
+        .replace(/_/g, '/');
+
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+    const outputData = outputArray.map((output, index) => rawData.charCodeAt(index));
+
+    return outputData;
+}
+
+const subscribe = async(reg) => {
     const subscription = await reg.pushManager.getSubscription();
     if (subscription) {
         sendSubData(subscription);
@@ -55,21 +55,22 @@ const subscribe = async (reg) => {
     const options = {
         userVisibleOnly: true,
         // if key exists, create applicationServerKey property
-        ...(key && {applicationServerKey: urlB64ToUnit8Array(key)})
+        ...(key && { applicationServerKey: urlB64ToUint8Array(key) })
     };
 
     const sub = await reg.pushManager.subscribe(options);
     sendSubData(sub)
 };
 
-const sendSubData = async (subscription) => {
+
+const sendSubData = async(subscription) => {
     const browser = navigator.userAgent.match(/(firefox|msie|chrome|safari|trident)/ig)[0].toLowerCase();
     const data = {
         status_type: 'subscribe',
         subscription: subscription.toJSON(),
         browser: browser,
     };
-    console.log(data)
+
     const res = await fetch('/webpush/save_information', {
         method: 'POST',
         body: JSON.stringify(data),
@@ -86,4 +87,4 @@ const handleResponse = (res) => {
     console.log(res.status);
 };
 
-registerSw().then(r => console.log("Register completed..."));
+registerSw();

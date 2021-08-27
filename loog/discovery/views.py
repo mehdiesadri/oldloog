@@ -23,7 +23,7 @@ def search(request):
             continue
         user = User.objects.get(pk=us)
         print(user)
-        payload = {'head': 'New Loog', 'body': 'Click to join chat session!'}
+        payload = {'head': 'New Loog', 'body': 'Google!', 'url': 'https://google.com', 'icon': 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/How_to_use_icon.svg/1200px-How_to_use_icon.svg.png'}
         # TODO: Add this to celery
         send_user_notification(user, payload, 1000)
         print("Sent notif to ", user)

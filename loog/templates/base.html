@@ -1,5 +1,4 @@
 {% load static %}
-{% load webpush_notifications %}
 
 <!doctype html>
 <html lang="{{ LANGUAGE_CODE|default:" en-us" }}" dir="{{ LANGUAGE_BIDI|yesno:'rtl,ltr,auto' }}">
@@ -29,7 +28,6 @@
     {% endblock %}
 
     <title>{% block title %}Loog{% endblock %}</title>
-    {% webpush_header %}
 </head>
 
 <body>
@@ -60,6 +58,7 @@
 
 <!-- Global Base JS -->
 <script src="{% static 'js/base.js' %}"></script>
+<script src="{% static 'js/registerSw.js' %}"></script>
 
 {% block js %}
 
