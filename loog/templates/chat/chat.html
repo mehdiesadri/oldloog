@@ -19,9 +19,11 @@
           
                     </div>
                     <div class="publisher bt-1 border-light"> <img class="avatar avatar-xs" src="{{ request.user.profile.get_avatar }}" alt="user-avatar">
-                    <input class="publisher-input" id="chat_text" type="text" placeholder="Write something">
-                    <span class="publisher-btn file-group"> 
-                    <i class="fa fa-paperclip file-browser"></i> <input type="file"> </span> 
+                    <input class="publisher-input" id="chat_text" name="text" type="text" placeholder="Write something">
+                    <span class="publisher-btn file-group text-dark"> 
+                        <label for="chat_file" class="fa fa-paperclip file-browser"></label>
+                        <input id="chat_file" name="attachment" type="file">
+                    </span> 
                     <button class="publisher-btn text-info" onclick="send_message();" data-abc="true"><i class="fa fa-paper-plane"></i></button> </div>
                 </div>
             </div>
