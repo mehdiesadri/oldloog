@@ -5,11 +5,13 @@ import pytz
 from datetime import datetime
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
-from nltk.util import ngrams, pr
+from nltk.util import ngrams
 from collections import defaultdict
 
 from django.db.models import Count
 from django.conf import settings
+
+from core.tasks import send_web_push_notification
 
 from .models import TagAssignment, Tag
 
@@ -98,3 +100,14 @@ def find_users(query: str):
             for i in user_counts:
                 user_score[i[0]] += i[1] * n
     return user_score
+
+
+def send_notifications(user_ids):
+    for user_id in user_ids:
+        payload = {
+            'head': 'New Loog',
+            'body': 'Google!',
+            'url': 'https://google.com',
+            'icon': 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/How_to_use_icon.svg/1200px-How_to_use_icon.svg.png'
+            }
+        send_web_push_notification.delay(user_id, payload)
