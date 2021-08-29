@@ -17,14 +17,18 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.conf import settings
 from django.urls import include, path
+from django.views.generic import TemplateView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path('sw.js', TemplateView.as_view(template_name='sw.js', content_type='application/x-javascript')),
     path("api/discovery/", include("discovery.api.routers")),
     path("discovery/", include("discovery.urls", namespace="discovery")),
     path("chat/", include(("chat.urls", "chat"), namespace="chat")),
+    path("api/chat/", include("chat.api.routers")),
     path("accounts/", include("accounts.urls", namespace="accounts")),
     path("api/accounts/", include("accounts.api.routers")),
+    path("webpush/", include("webpush.urls")),
     path("", include("main.urls", namespace="main")),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) \
               + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

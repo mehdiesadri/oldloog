@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="container">
+    <div class="alert alert-info mt-3" role="alert">
+        <p class="font-weight-light mt-3" data-toggle="tooltip"> Pick a user and start chatting! <br />
+            {{matchingProfiles}}</p>
+    </div>
+    <div class="page-header">
+
+        <p></p>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div id="user-list" class="list-group">
+                <h5 class="list-group-item-heading">Sessions</h5>
+                    {% for obj in object_list %}
+                        <a href="{{ obj.get_absolute_url }}" class="list-group-item" class="btn btn-primary">{{ obj.session.query }}</a>
+                    {% endfor %}
+            </div>
+        </div>
+</div>
+
+{% endblock %}

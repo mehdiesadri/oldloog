@@ -1,53 +1,40 @@
 {% extends 'base.html' %}
+
 {% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/chat.css' %}" type="text/css">
+{% endblock css %}
+
 
 {% block content %}
 
-<div class="container">
-    <div class="alert alert-info mt-3" role="alert">
-        <p class="font-weight-light mt-3" data-toggle="tooltip"> Pick a user and start chatting! <br />
-            {{matchingProfiles}}</p>
-    </div>
-    <div class="page-header">
-
-        <p></p>
-    </div>
-
-    <div class="row">
-        <div class="col-md-4">
-            <div id="user-list" class="list-group">
-                <a href="" class="list-group-item disabled">
-                    <h5 class="list-group-item-heading">Users</h5>
-                    {# Users go here #}
-                </a>
-            </div>
-        </div>
-        <div class="col-md-8">
-            <div class="panel panel-info bg-light">
-                <div>
-                    <ul id="messages" class="messages">
-                        {# Messages go here #}
-                    </ul>
-                </div>
-                <div class="panel-footer">
-                    <div class="input-group">
-                        <input id="chat-input" type="text" class="form-control input"
-                            placeholder="Type your message here ..." maxlength="500">
-                        <span class="input-group-btn">
-                            <button class="btn btn-info btn" id="btn-send">
-                                Send</button>
-                        </span>
+        <div class="row d-flex justify-content-center">
+            <div class="col-md-8 col-sm-12">
+                <div class="card card-bordered mt-3 mb-3">
+                    <div class="card-header">
+                        <h4 class="card-title"><strong>Chat</strong></h4> <a class="btn btn-xs btn-secondary" href="#" data-abc="true">Let's Chat App</a>
                     </div>
+                    <div class="ps-container ps-theme-default ps-active-y" id="chat-content" style="overflow-y: scroll !important; height:300px !important;">
+          
+                    </div>
+                    <div class="publisher bt-1 border-light"> <img class="avatar avatar-xs" src="{{ request.user.profile.get_avatar }}" alt="user-avatar">
+                    <input class="publisher-input" id="chat_text" name="text" type="text" placeholder="Write something">
+                    <span class="publisher-btn file-group text-dark"> 
+                        <label for="chat_file" class="fa fa-paperclip file-browser"></label>
+                        <input id="chat_file" name="attachment" type="file">
+                    </span> 
+                    <button class="publisher-btn text-info" onclick="send_message();" data-abc="true"><i class="fa fa-paper-plane"></i></button> </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
 
+{% endblock content %}
+
+{% block js %}
 <script>
-    let sessionKey = '{{ request.session.session_key }}';
-    let currentUser = '{{ request.user.username }}';
+    const roomName = "{{ room_name }}";
+    const userID = {{ request.user.id }};
 </script>
-<script src="{% static 'app.js' %}"></script>
-
-{% endblock %}
+<script src="{% static 'js/chat.js' %}"></script>
+{% endblock js %}

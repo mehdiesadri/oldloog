@@ -28,7 +28,7 @@ class Profile(DateTimeModel):
         ONCE_A_WEEK = 8, _("Once a week")
 
     user = models.OneToOneField(to=User, on_delete=models.CASCADE, verbose_name=_("User"))
-    avatar = models.ImageField(verbose_name=_("Avatar"), upload_to='user_profiles/', blank=True, null=True)
+    avatar = models.FileField(verbose_name=_("Avatar"), upload_to='user_profiles/', blank=True, null=True)
     location = models.CharField(verbose_name=_("Location"), max_length=64, blank=True, null=True)
     birthdate = models.DateField(verbose_name=_("Birthdate"), blank=True, null=True)
     preferences = models.IntegerField(verbose_name=_("User Preferences"), choices=UserPreferences.choices,
