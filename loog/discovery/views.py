@@ -2,9 +2,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from django.views import generic
 
-from webpush import send_user_notification
-
 from core.mixins import ProfileRequiredMixin
+from core.tasks import send_web_push_notification
 from accounts.models import User
 
 from .utils import find_users
@@ -25,6 +24,6 @@ def search(request):
         print(user)
         payload = {'head': 'New Loog', 'body': 'Google!', 'url': 'https://google.com', 'icon': 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/How_to_use_icon.svg/1200px-How_to_use_icon.svg.png'}
         # TODO: Add this to celery
-        send_user_notification(user, payload, 1000)
+        send_web_push_notification.delay(user, payload, 1000)
         print("Sent notif to ", user)
     return HttpResponse("OK")
