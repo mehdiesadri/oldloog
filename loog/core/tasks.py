@@ -3,6 +3,8 @@ from celery.utils.log import get_task_logger
 from django.contrib.auth import get_user_model
 from nltk.util import pr
 
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 from webpush import send_user_notification
 
 from .utils import send_mail_to
@@ -18,6 +20,17 @@ def send_email(*args, **kwargs):
 def send_web_push_notification(user_id: int, payload: dict, ttl: int = 1000):
     User = get_user_model()
     user = User.objects.get(id=user_id)
+    notification = {
+            "type": "notification_message",
+            "message": "New",
+        }
+
+    channel_layer = get_channel_layer()
+
+    async_to_sync(channel_layer.group_send)(
+        f"chat_{user_id}", notification
+        )
+    
     send_user_notification(
         user=user,
         payload=payload,

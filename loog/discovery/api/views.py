@@ -1,11 +1,11 @@
-from django.db.models import query
-
-from rest_framework import mixins, viewsets, permissions, views, status
+from rest_framework import mixins, viewsets, permissions, generics, status
 from rest_framework.response import Response
 
 from discovery.models import Tag, TagAssignment
 from discovery.utils import find_users, send_notifications
 
+from accounts.api.serializers import UserSerializer
+from accounts.models import User
 from .serializers import TagSerializer, TagAssignmentSerializer
 
 
@@ -25,10 +25,11 @@ class TagAssignmentViewSet(viewsets.ModelViewSet):
     queryset = TagAssignment.objects.all()
 
 
-class SearchUserAPI(views.APIView):
+class SearchUserAPI(generics.ListAPIView):
     permission_classes = (permissions.IsAuthenticated, )
+    serializer_class = UserSerializer
 
-    def get(self, *args, **kwargs):
+    def get_queryset(self):
         query = self.request.query_params.get('query')
         if query is None:
             return Response(
@@ -41,4 +42,5 @@ class SearchUserAPI(views.APIView):
         if self.request.user.id in user_score:
             user_score.pop(self.request.user.id)
         send_notifications(user_score.keys())
-        return Response(data=user_score, status=200)
+        return User.objects.filter(id__in=user_score.keys())
+

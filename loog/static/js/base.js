@@ -29,3 +29,27 @@ $('document').ready(function() {
     });
 
 });
+
+const notificationSocket = new WebSocket(
+    'ws://' + window.location.host + '/ws/notifications/'
+);
+
+notificationSocket.onopen = function(e) {
+    console.log("Opened...");
+}
+
+notificationSocket.onmessage = function(e) {
+    let data = JSON.parse(e.data);
+    let message = data.message;
+
+    if (message) {
+        console.log(message);
+    } else {
+        console.log("message is empty");
+    }
+}
+
+notificationSocket.onclose = function(e) {
+    console.log("The socket closed....");
+    console.log(e);
+}
