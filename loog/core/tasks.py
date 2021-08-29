@@ -1,5 +1,7 @@
 from celery import shared_task
 from celery.utils.log import get_task_logger
+from django.contrib.auth import get_user_model
+from nltk.util import pr
 
 from webpush import send_user_notification
 
@@ -13,7 +15,9 @@ def send_email(*args, **kwargs):
     logger.info(f"An email sent to {kwargs.get('receivers', [])}")
 
 @shared_task
-def send_web_push_notification(user, payload: dict, ttl: int = 1000):
+def send_web_push_notification(user_id: int, payload: dict, ttl: int = 1000):
+    User = get_user_model()
+    user = User.objects.get(id=user_id)
     send_user_notification(
         user=user,
         payload=payload,

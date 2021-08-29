@@ -8,14 +8,23 @@ self.addEventListener('push', function(event) {
     const head = data.head || 'New Notification 🕺🕺';
     const body = data.body || 'This is default content. Your notification didn\'t have one 🙄🙄';
     const icon = data.icon || 'https://i.imgur.com/MZM3K5w.png';
-    const url = data.url || '';
+    const url = data.url || 'https://www.google.com/';
 
     // Keep the service worker alive until the notification is created.
     event.waitUntil(
         self.registration.showNotification(head, {
             body: body,
-            url: url,
-            icon: icon
+            icon: icon,
+            data: {
+                url: url,
+            }
         })
+    );
+});
+
+self.addEventListener('notificationclick', function(event) {
+    event.notification.close();
+    event.waitUntil(
+        clients.openWindow(event.notification.data.url)
     );
 });
