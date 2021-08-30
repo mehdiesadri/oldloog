@@ -42,10 +42,14 @@ notificationSocket.onmessage = function(e) {
     let data = JSON.parse(e.data);
     let message = data.message;
 
-    if (message) {
-        console.log(message);
-    } else {
-        console.log("message is empty");
+    switch (message) {
+        case 'redirect_to_session':
+            window.location.href = data.data.url;
+            break;
+
+        default:
+            console.log(message);
+            break;
     }
 }
 

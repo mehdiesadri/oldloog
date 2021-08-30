@@ -1,10 +1,10 @@
 from django.contrib.auth.decorators import login_required
 from django.http.response import HttpResponse
 from django.views import generic
-from django.shortcuts import get_object_or_404
-from nltk.util import pr
+from django.shortcuts import get_object_or_404, redirect
 
-
+from accounts.models import User
+from core.tasks import send_in_app_notification
 from .models import ChatSessionUser, ChatSession
 
 
@@ -29,5 +29,24 @@ class ChatSessionView(generic.TemplateView):
 
 @login_required
 def join_chat_session(request, room_name):
-    print(room_name)
-    return HttpResponse("OK")
+    starter = request.GET.get('starter')
+    session = get_object_or_404(ChatSession, room_name=room_name)
+    session_user, _ = ChatSessionUser.objects.get_or_create(
+        user=request.user,
+        session=session
+    )
+    # Notify inviter
+    payload = {
+            "type": "notification_message",
+            "message": "redirect_to_session",
+            "data": {
+                "url":  session.get_absolute_url(),
+            }
+        }
+    if starter:
+        send_in_app_notification(
+            get_object_or_404(User, username=starter).id,
+            payload
+            )
+    # Set expire time
+    return redirect(session_user.get_absolute_url())

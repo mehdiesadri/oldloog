@@ -50,7 +50,7 @@ class SearchUserAPI(generics.ListAPIView):
         payload = {
             'head': 'New chat request',
             'body': f'Query: {query}',
-            'url': session_obj.get_absolute_url(),
+            'url': session_obj.get_absolute_url() + f'?starter={self.request.user.username}',
             'icon': self.request.user.profile.get_avatar()
         }
         send_notifications(user_score.keys(), payload)

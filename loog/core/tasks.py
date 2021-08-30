@@ -17,6 +17,14 @@ def send_email(*args, **kwargs):
     logger.info(f"An email sent to {kwargs.get('receivers', [])}")
 
 @shared_task
+def send_in_app_notification(user_id: int, payload: dict):
+    channel_layer = get_channel_layer()
+
+    async_to_sync(channel_layer.group_send)(
+        f"chat_{user_id}", payload
+        )
+
+@shared_task
 def send_web_push_notification(user_id: int, payload: dict, ttl: int = 1000):
     User = get_user_model()
     user = User.objects.get(id=user_id)
