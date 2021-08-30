@@ -1,9 +1,11 @@
+import uuid
+
 from rest_framework import mixins, viewsets, permissions, generics, status
 from rest_framework.response import Response
 
 from discovery.models import Tag, TagAssignment
 from discovery.utils import find_users, send_notifications
-
+from chat.models import ChatSession
 from accounts.api.serializers import UserSerializer
 from accounts.models import User
 from .serializers import TagSerializer, TagAssignmentSerializer
@@ -38,9 +40,19 @@ class SearchUserAPI(generics.ListAPIView):
                     },
                 status=status.HTTP_400_BAD_REQUEST
                 )
+        session_obj = ChatSession.objects.create(
+           query=query,
+           room_name=uuid.uuid4().hex[:10].upper()
+        )
         user_score = find_users(query)
         if self.request.user.id in user_score:
             user_score.pop(self.request.user.id)
-        send_notifications(user_score.keys())
+        payload = {
+            'head': 'New chat request',
+            'body': f'Query: {query}',
+            'url': session_obj.get_absolute_url(),
+            'icon': self.request.user.profile.get_avatar()
+        }
+        send_notifications(user_score.keys(), payload)
         return User.objects.filter(id__in=user_score.keys())
 

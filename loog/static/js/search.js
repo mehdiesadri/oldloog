@@ -34,7 +34,7 @@ function search() {
                     alert("Please check the internet connection!")
                 }
                 reset();
-                console.error(error.status);
+                console.error(error);
             }
         });
     }

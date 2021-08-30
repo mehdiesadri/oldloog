@@ -6,7 +6,7 @@ from django.conf import settings
 from rest_framework import viewsets, mixins, generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError
 from rest_framework.authentication import SessionAuthentication
 
 from .serializers import MessageSerializer, UserModelSerializer
@@ -44,6 +44,8 @@ class SessionMessageAPI(generics.ListCreateAPIView):
         return session.messages.all()
     
     def perform_create(self, serializer):
+        if self.get_chat_session().is_expired:
+            raise ValidationError("Chat session is expired!")
         return serializer.save(
             sender=self.request.user,
             session=self.get_chat_session()

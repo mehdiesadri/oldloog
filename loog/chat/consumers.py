@@ -1,10 +1,9 @@
 # chat/consumers.py
 
-from channels.generic.websocket import AsyncWebsocketConsumer
-from asgiref.sync import sync_to_async
 import json
 
-from .models import ChatSession
+from channels.generic.websocket import AsyncWebsocketConsumer
+
 
 
 class ChatConsumer(AsyncWebsocketConsumer):

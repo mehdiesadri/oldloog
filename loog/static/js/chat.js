@@ -2,24 +2,26 @@
 var input = document.getElementById("chat_text");
 
 // Execute a function when the user releases a key on the keyboard
-input.addEventListener("keyup", function(event) {
-    var code;
-
-    if (event.key !== undefined) {
-        code = event.key;
-    } else if (event.keyIdentifier !== undefined) {
-        code = event.keyIdentifier;
-    } else if (event.keyCode !== undefined) {
-        code = event.keyCode;
-    }
-    // Number 13 is the "Enter" key on the keyboard
-    if (code === 13 || code === "Enter") {
-        // Cancel the default action, if needed
-        event.preventDefault();
-        // Trigger the button element with a click
-        send_message();
-    }
-});
+if (input) {
+    input.addEventListener("keyup", function(event) {
+        var code;
+    
+        if (event.key !== undefined) {
+            code = event.key;
+        } else if (event.keyIdentifier !== undefined) {
+            code = event.keyIdentifier;
+        } else if (event.keyCode !== undefined) {
+            code = event.keyCode;
+        }
+        // Number 13 is the "Enter" key on the keyboard
+        if (code === 13 || code === "Enter") {
+            // Cancel the default action, if needed
+            event.preventDefault();
+            // Trigger the button element with a click
+            send_message();
+        }
+    });
+}
 
 const endpoint = `/api/chat/v1/session/${roomName}/message/`;
 

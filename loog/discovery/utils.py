@@ -102,12 +102,6 @@ def find_users(query: str):
     return user_score
 
 
-def send_notifications(user_ids):
+def send_notifications(user_ids, payload):
     for user_id in user_ids:
-        payload = {
-            'head': 'New Loog',
-            'body': 'Google!',
-            'url': 'https://google.com',
-            'icon': 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/How_to_use_icon.svg/1200px-How_to_use_icon.svg.png'
-            }
         send_web_push_notification.delay(user_id, payload)

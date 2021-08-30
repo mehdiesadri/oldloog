@@ -7,10 +7,15 @@ from core.models import DateTimeModel
 
 class ChatSession(DateTimeModel):
     query = models.CharField(verbose_name="query", max_length=1024)
-    room_name = models.CharField(max_length=2048)
+    room_name = models.CharField(max_length=12, unique=True)
+    is_expired = models.BooleanField(default=False)
 
     def __str__(self) -> str:
         return f"Room: {self.room_name}"
+    
+    def get_absolute_url(self):
+        return reverse("chat:join-session", kwargs={"room_name": self.room_name})
+    
 
 class ChatSessionUser(DateTimeModel):
     user = models.ForeignKey(
@@ -27,6 +32,9 @@ class ChatSessionUser(DateTimeModel):
     
     def get_absolute_url(self):
         return reverse("chat:session", kwargs={"room_name": self.session.room_name})
+    
+    class Meta:
+        ordering = ("session__is_expired", )
     
 
 
