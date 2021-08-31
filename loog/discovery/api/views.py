@@ -5,7 +5,7 @@ from rest_framework.response import Response
 
 from discovery.models import Tag, TagAssignment
 from discovery.utils import find_users, send_notifications
-from chat.models import ChatSession
+from chat.models import ChatSession, ChatSessionUser
 from accounts.api.serializers import UserSerializer
 from accounts.models import User
 from .serializers import TagSerializer, TagAssignmentSerializer
@@ -32,17 +32,24 @@ class SearchUserAPI(generics.ListAPIView):
     serializer_class = UserSerializer
 
     def get_queryset(self):
-        query = self.request.query_params.get('query')
-        if query is None:
+        user = self.request.user
+        query = self.request.query_params.get('query', '').strip()
+        
+        if query == '':
             return Response(
                 data={
                     "error": "Required query parameter: query."
                     },
                 status=status.HTTP_400_BAD_REQUEST
                 )
+        
         session_obj = ChatSession.objects.create(
            query=query,
            room_name=uuid.uuid4().hex[:10].upper()
+        )
+        ChatSessionUser.objects.create(
+            user=user,
+            session=session_obj
         )
         user_score = find_users(query)
         if self.request.user.id in user_score:
@@ -50,7 +57,7 @@ class SearchUserAPI(generics.ListAPIView):
         payload = {
             'head': 'New chat request',
             'body': f'Query: {query}',
-            'url': session_obj.get_absolute_url() + f'?starter={self.request.user.username}',
+            'url': session_obj.get_absolute_url(),
             'icon': self.request.user.profile.get_avatar()
         }
         send_notifications(user_score.keys(), payload)

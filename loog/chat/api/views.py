@@ -3,11 +3,12 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from django.conf import settings
 
-from rest_framework import viewsets, mixins, generics
+from rest_framework import viewsets, views, generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.exceptions import ValidationError
 from rest_framework.authentication import SessionAuthentication
+from rest_framework.response import Response
 
 from .serializers import MessageSerializer, UserModelSerializer
 from chat.models import Message, ChatSession
@@ -63,3 +64,14 @@ class UserModelViewSet(viewsets.ModelViewSet):
         # Get all users except yourself
         self.queryset = self.queryset.exclude(id=request.user.id)
         return super(UserModelViewSet, self).list(request, *args, **kwargs)
+
+
+class SessionExpireAPI(views.APIView):
+    permission_classes = (IsAuthenticated, )
+
+    def get(self, request, room_name, *args, **kwargs):
+        session = get_object_or_404(ChatSession, room_name=room_name)
+        return Response({
+            "timestamp": session.get_expire_datetime(),
+            "is_expired": session.is_expired
+        }, status=200)

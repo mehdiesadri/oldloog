@@ -23,7 +23,7 @@ function search() {
                     setTimeout(function() {
                         alert("No user found!");
                         reset();
-                    }, 2000);
+                    }, 30000);
                     allowed = false;
                 }
             },

@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
 
 from accounts.models import User
 from core.models import DateTimeModel
@@ -8,10 +9,20 @@ from core.models import DateTimeModel
 class ChatSession(DateTimeModel):
     query = models.CharField(verbose_name="query", max_length=1024)
     room_name = models.CharField(max_length=12, unique=True)
-    is_expired = models.BooleanField(default=False)
 
     def __str__(self) -> str:
         return f"Room: {self.room_name}"
+    
+    @property
+    def is_open_for_first_join(self):
+        return (timezone.now() - self.created_at).seconds > 30
+
+    @property
+    def is_expired(self):
+        return self.get_expire_datetime() < timezone.now()
+    
+    def get_expire_datetime(self):
+        return self.created_at + timezone.timedelta(seconds=210)
     
     def get_absolute_url(self):
         return reverse("chat:join-session", kwargs={"room_name": self.room_name})
@@ -34,7 +45,7 @@ class ChatSessionUser(DateTimeModel):
         return reverse("chat:session", kwargs={"room_name": self.session.room_name})
     
     class Meta:
-        ordering = ("session__is_expired", )
+        ordering = ("-created_at", )
     
 
 

@@ -43,8 +43,10 @@ notificationSocket.onmessage = function(e) {
     let message = data.message;
 
     switch (message) {
-        case 'redirect_to_session':
-            window.location.href = data.data.url;
+        case 'redirect':
+            if (window.location.href !== data.data.url) {
+                window.location.href = data.data.url;
+            }
             break;
 
         default:

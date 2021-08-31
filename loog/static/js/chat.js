@@ -5,7 +5,7 @@ var input = document.getElementById("chat_text");
 if (input) {
     input.addEventListener("keyup", function(event) {
         var code;
-    
+
         if (event.key !== undefined) {
             code = event.key;
         } else if (event.keyIdentifier !== undefined) {
@@ -23,7 +23,36 @@ if (input) {
     });
 }
 
-const endpoint = `/api/chat/v1/session/${roomName}/message/`;
+const messageEndpoint = `/api/chat/v1/session/${roomName}/message/`;
+const expireEndpoint = `/api/chat/v1/session/${roomName}/expire/`;
+
+$.ajax({
+    url: expireEndpoint,
+    method: 'get',
+    success: function(data) {
+        if (data.is_expired) {
+            document.getElementById("btn_countdown").innerHTML = "EXPIRED";
+        } else {
+            // start timer
+            var countDownDate = new Date(data.timestamp).getTime();
+            var x = setInterval(function() {
+                var now = new Date().getTime();
+                var distance = countDownDate - now;
+                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                document.getElementById("btn_countdown").innerHTML = minutes + "m " + seconds + "s ";
+
+                if (distance < 0) {
+                    clearInterval(x);
+                    document.getElementById("btn_countdown").innerHTML = "EXPIRED";
+                }
+            }, 1000);
+        }
+    },
+    error: function(error) {
+        console.error(error);
+    }
+});
 
 const chatSocket = new WebSocket(
     'ws://' + window.location.host + '/ws/' + roomName + "/"
@@ -33,7 +62,8 @@ chatSocket.onmessage = function(e) {
     let data = JSON.parse(e.data);
     let message = data.message;
 
-    if (message) {
+    if (message === "chat") {
+        message = data.data;
         if (message.sender == userID) {
             add_message(message, true);
         } else {
@@ -71,7 +101,7 @@ function send_message() {
     formData.append("text", message_text);
 
     $.ajax({
-        url: endpoint,
+        url: messageEndpoint,
         type: 'POST',
         data: formData,
         processData: false,
@@ -121,7 +151,7 @@ function add_message(message, reverse = false) {
 
 function fetch_messages(roomName) {
     $.ajax({
-        url: endpoint + '?limit=1000',
+        url: messageEndpoint + '?limit=1000',
         method: "GET",
         success: function(data) {
             data.results.reverse().forEach(message => {
