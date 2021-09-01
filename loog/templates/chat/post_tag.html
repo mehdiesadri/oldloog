@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Tag firends{% endblock title %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/tagsinput.css' %}">
+{% endblock %}
+
+
+{% block content %}
+    <div class="container mx-auto">
+        <div class="row">
+            <div class="col-12 pb-4">
+                <div class="card p-4 mt-3">
+                    <div class="card-body">
+                        <h2 class="card-title">Provide your feedback by setting tags.</h2>
+                            <form class="mt-2" onsubmit="return submit_tags();">
+                            {% for obj in objects %}
+                                <div class="form-group">
+                                    <label for="txt_tag_{{ obj.id }}">Set tags for {{ obj.user }}</label>
+                                    <input type="text" value="{{ obj.top_tags }}" data-role="tagsinput" data-userid="{{ obj.user.id }}" class="form-control tag-text-input" id="txt_tag_{{ obj.id }}" aria-describedby="txt_tag_{{ obj.id }}">
+                                    <small id="help_txt_tag_{{ obj.id }}" class="form-text text-muted">Seprate tags by comma or pressing the enter key.</small>
+                                </div>
+                            {% endfor %}
+                                <button class="btn btn-primary" id="btn_submit" type="submit">Submit</button>
+                            </form>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block js %}
+    <script src="{% static 'js/tagsinput.js' %}"></script>
+    <script>
+    const UserID = {{ request.user.id }}
+    </script>
+    <script src="{% static 'js/post_tag.js' %}"></script>
+{% endblock js %}

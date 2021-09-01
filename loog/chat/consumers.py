@@ -1,10 +1,9 @@
 # chat/consumers.py
 
-from channels.generic.websocket import AsyncWebsocketConsumer
-from asgiref.sync import sync_to_async
 import json
 
-from .models import ChatSession
+from channels.generic.websocket import AsyncWebsocketConsumer
+
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -56,4 +55,36 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             'message': message,
             # 'room': room
+        }))
+
+class NotificationConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        self.user_id = self.scope['session']['_auth_user_id']
+        print("Here", self.user_id)
+        self.room_name = str(self.user_id)
+        self.room_group_name = 'chat_%s' % self.room_name      
+
+        # Join room group
+        await self.channel_layer.group_add(
+            self.room_group_name,
+            self.channel_name
+        )
+
+        await self.accept()
+
+    async def disconnect(self, close_code):
+        # Leave room group
+        await self.channel_layer.group_discard(
+            self.room_group_name,
+            self.channel_name
+        )
+    
+    async def notification_message(self, event):
+        message = event.get('message')
+        data = event.get('data')
+
+        # Send message to WebSocket
+        await self.send(text_data=json.dumps({
+            'message': message,
+            'data': data
         }))

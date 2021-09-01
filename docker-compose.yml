@@ -17,6 +17,19 @@ services:
         depends_on: 
             - db
             - redis
+    daphne:
+        build: ./loog/ 
+        command: daphne -b 0.0.0.0 -p 8001 loog.asgi:application
+        volumes: 
+            - ./loog/:/usr/src/loog/
+        expose:             
+            - 8001
+        env_file: 
+            - ./.env
+        restart: always
+        depends_on: 
+            - db
+            - redis
     db:
         image: mysql:8.0
         cap_add:
@@ -33,6 +46,7 @@ services:
             - 80:80
         depends_on:
             - web
+            - daphne
         volumes: 
             - static_volume:/usr/apps/loog/static
             - media_volume:/usr/apps/loog/media

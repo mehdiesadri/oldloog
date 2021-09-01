@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %} LOOG {% endblock %}
 {% block content %}
@@ -18,11 +19,11 @@
         </div>
         <div class="row">
             <div class="col-12">
-                <form action="{% url 'discovery:search' %}" method="get">
+                <form onsubmit="return search();">
                     <div class="input-group">
-                        <input type="text" name="query" class="form-control" placeholder="Subject..">
+                        <input type="text" id="txt_query" name="query" class="form-control" placeholder="Subject..">
                         <div class="input-group-append">
-                            <button class="btn btn-secondary" type="submit" value="search">
+                            <button id="btn_submit" class="btn btn-secondary" type="submit" value="search">
                                 <i class="fa fa-search"></i>
                             </button>
                         </div>
@@ -30,6 +31,18 @@
                 </form>
             </div>
         </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div id="loading" class="d-none">
+                    <b>Searching..., Please wait!</b>
+                </div>
+            </div>
+        </div>
     </div>
 
 {% endblock %}
+
+{% block js %}
+<script src="{% static 'js/search.js' %}"></script>
+{% endblock js %}
