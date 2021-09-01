@@ -26,6 +26,13 @@ class TagAssignmentViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAdminUser, )
     queryset = TagAssignment.objects.all()
 
+class UserTagAssignmentViewSet(mixins.ListModelMixin,
+                 mixins.CreateModelMixin,
+                 mixins.RetrieveModelMixin,
+                 viewsets.GenericViewSet):
+    """CR API of TagAssignment for authenticated users"""
+    queryset = TagAssignment.objects.all()
+    serializer_class = TagAssignmentSerializer
 
 class SearchUserAPI(generics.ListAPIView):
     permission_classes = (permissions.IsAuthenticated, )

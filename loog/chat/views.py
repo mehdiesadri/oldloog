@@ -2,8 +2,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views import generic
 from django.shortcuts import get_object_or_404, redirect, render
+from nltk.util import pr
 
 from accounts.models import User
+from discovery.selectors import get_tag_count
 from core.tasks import send_in_app_notification
 from .models import ChatSessionUser, ChatSession
 
@@ -69,9 +71,16 @@ def join_chat_session(request, room_name):
 @login_required
 def session_post_tag(request, room_name):
     session = get_object_or_404(ChatSession, room_name=room_name)
-    session_users = session.chatsessionuser_set.exclude(user=request.user).values('user')
-    print(session_users)
+    session_users = session.chatsessionuser_set.exclude(user=request.user)
+    objects = []
+    for i in session_users:
+        objects.append({
+            'id': i.id,
+            'user': i.user,
+            'top_tags': ','.join(list(get_tag_count(receiver=i.user).keys())[:2])
+        })
     context = {
-        'session': session
+        'session': session,
+        'objects': objects,
     }
     return render(request, "chat/post_tag.html", context)

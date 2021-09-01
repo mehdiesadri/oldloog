@@ -6,6 +6,7 @@ from . import views
 api_router = DefaultRouter()
 api_router.register('tags', views.TagViewSet, 'tags')
 api_router.register('assignments', views.TagAssignmentViewSet, 'assignments')
+api_router.register('user-assignments', views.UserTagAssignmentViewSet, 'user-assignments')
 
 urlpatterns = [
     path('v1/', include(api_router.urls)),

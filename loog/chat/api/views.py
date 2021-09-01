@@ -69,8 +69,11 @@ class UserModelViewSet(viewsets.ModelViewSet):
 class SessionExpireAPI(views.APIView):
     permission_classes = (IsAuthenticated, )
 
+    def get_session(self, room_name):
+        return get_object_or_404(ChatSession, room_name=room_name)
+
     def get(self, request, room_name, *args, **kwargs):
-        session = get_object_or_404(ChatSession, room_name=room_name)
+        session = self.get_session(room_name)
         return Response({
             "timestamp": session.get_expire_datetime(),
             "is_expired": session.is_expired
