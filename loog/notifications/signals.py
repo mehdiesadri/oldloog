@@ -1,7 +1,7 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from core.tasks import send_email, send_web_push_notification, send_in_app_notification
+
 from .models import Notification
 
 
@@ -12,19 +12,8 @@ def send_notification(sender, instance, created, *args, **kwargs):
     """
     if created:
         if instance.is_email:
-            send_email.delay(
-                subject=instance.title,
-                message=instance.body,
-                receivers=[instance.user.email,]
-            )
+            instance.send_as_email()
         if instance.is_webpush:
-            send_web_push_notification.delay(
-                user_id=instance.user.id,
-                payload=instance.get_payload(),
-                ttl=1500
-            )
+            instance.send_as_webpush()
         if instance.is_internal:
-            send_in_app_notification.delay(
-                user_id=instance.user.id,
-                payload=instance.get_payload()
-            )
+            instance.send_as_internal()
