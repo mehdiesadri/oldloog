@@ -6,6 +6,6 @@ from core.mixins import ProfileRequiredMixin
 from .utils import find_users
 
 
-class IndexPage(ProfileRequiredMixin, LoginRequiredMixin, generic.TemplateView):
+class IndexPage(ProfileRequiredMixin, generic.TemplateView):
     template_name = 'discovery/index.html'
 

@@ -35,7 +35,7 @@
 
 {% block js %}
 <script>
-    const roomName = "{{ room_name }}";
+    const roomName = "{{ session_obj.room_name }}";
     const userID = {{ request.user.id }};
 </script>
 <script src="{% static 'js/chat.js' %}"></script>

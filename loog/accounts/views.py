@@ -162,7 +162,7 @@ class RegisterView(generic.View):
         return HttpResponseForbidden(_("Sorry! You don't have access to this link..."))
 
 
-class ProfileView(ProfileRequiredMixin, LoginRequiredMixin, generic.TemplateView):
+class ProfileView(ProfileRequiredMixin, generic.TemplateView):
     template_name = "accounts/profile.html"
 
     def get_context_data(self, **kwargs):
@@ -223,7 +223,7 @@ class SetInviterTagView(LoginRequiredMixin, generic.View):
         return render(request, 'accounts/profile_update.html', context)
 
 
-class InvitePage(SuccessMessageMixin, ProfileRequiredMixin, LoginRequiredMixin, generic.CreateView):
+class InvitePage(SuccessMessageMixin, ProfileRequiredMixin, generic.CreateView):
     template_name = 'accounts/invite.html'
     form_class = InviteForm
     success_url = reverse_lazy("accounts:invite")

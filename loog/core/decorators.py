@@ -1,5 +1,6 @@
 from functools import wraps
 
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _
@@ -14,6 +15,7 @@ def profile_required(function):
     """
 
     @wraps(function)
+    @login_required
     def wrap(request, *args, **kwargs):
         if request.user.is_superuser:
             return function(request, *args, **kwargs)
