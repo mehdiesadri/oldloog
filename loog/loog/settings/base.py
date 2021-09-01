@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "accounts.apps.AccountsConfig",
     "discovery.apps.DiscoveryConfig",
     "chat.apps.ChatConfig",
+    "notifications.apps.NotificationsConfig",
     # Third-Party Apps
     "channels",
     "crispy_forms",

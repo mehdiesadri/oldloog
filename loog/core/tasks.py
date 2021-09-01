@@ -28,16 +28,6 @@ def send_in_app_notification(user_id: int, payload: dict):
 def send_web_push_notification(user_id: int, payload: dict, ttl: int = 1000):
     User = get_user_model()
     user = User.objects.get(id=user_id)
-    notification = {
-            "type": "notification_message",
-            "message": "New",
-        }
-
-    channel_layer = get_channel_layer()
-
-    async_to_sync(channel_layer.group_send)(
-        f"chat_{user_id}", notification
-        )
     
     send_user_notification(
         user=user,
