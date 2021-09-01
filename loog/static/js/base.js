@@ -40,12 +40,14 @@ notificationSocket.onopen = function(e) {
 
 notificationSocket.onmessage = function(e) {
     let data = JSON.parse(e.data);
-    let message = data.message;
+    let type = data.type;
 
-    switch (message) {
-        case 'redirect':
-            if (window.location.href !== data.data.url) {
-                window.location.href = data.data.url;
+    switch (data.type) {
+        case 'system_message':
+            if (data.head === "REDIRECT") {
+                if (window.location.href !== data.url) {
+                    window.location.href = data.url;
+                }
             }
             break;
 

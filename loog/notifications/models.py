@@ -14,6 +14,7 @@ class Notification(DateTimeModel):
     icon_url = models.CharField(max_length=512, blank=True, null=True)
     url = models.CharField(max_length=512, blank=True, null=True)
 
+    is_system = models.BooleanField(default=False)
     is_email = models.BooleanField(default=False)
     is_webpush = models.BooleanField(default=False)
     is_internal = models.BooleanField(default=False)
@@ -41,9 +42,15 @@ class Notification(DateTimeModel):
             )
     
     def send_as_internal(self):
+        payload = self.get_payload()
+        if self.is_system:
+            payload.update({'type': 'system_message'})
+        else:
+            payload.update({'type': 'notification_message'})
+        
         send_in_app_notification.delay(
                 user_id=self.user.id,
-                payload=self.get_payload()
+                payload=payload
             )
 
     def __str__(self) -> str:
