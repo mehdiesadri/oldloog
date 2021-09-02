@@ -122,10 +122,12 @@ function add_message(message, reverse = false) {
     let class_name = "media media-chat";
     let avatar = `<img class="avatar" src="${message.avatar}" alt="user-avatar">`;
     let attachment = "";
+    let username = `<small>${message.user}</small>`;
 
     if (reverse) {
         class_name += " media-chat-reverse";
         avatar = "";
+        username = "";
     }
 
     if (message.attachment) {
@@ -141,8 +143,9 @@ function add_message(message, reverse = false) {
 
     chat_content.innerHTML += `<div class="${class_name}">` +
         avatar +
-        `<div class="media-body">
-            <p>${message.text}</p>` +
+        `<div class="media-body">` +
+        username +
+        `<p>${message.text}</p>` +
         attachment +
         `<p class="meta">${datetime}</p>
         </div>
@@ -171,7 +174,5 @@ function fetch_messages(roomName) {
     });
     console.log(roomName);
 }
-
-fetch_messages(roomName);
 
 fetch_messages(roomName);

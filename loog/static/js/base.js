@@ -51,8 +51,11 @@ notificationSocket.onmessage = function(e) {
             }
             break;
 
+        case 'notification_message':
+            break;
+
         default:
-            console.log(message);
+            console.log(data);
             break;
     }
 }
