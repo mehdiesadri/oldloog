@@ -18,7 +18,16 @@
             <div id="user-list" class="list-group">
                 <h5 class="list-group-item-heading">Sessions</h5>
                     {% for obj in object_list %}
-                        <a href="{{ obj.get_absolute_url }}" class="list-group-item" class="btn btn-primary">{{ obj.session.query }}</a>
+                
+                    <a href="{{ obj.get_absolute_url }}" class="list-group-item" class="btn btn-primary">
+                        {{ obj.session.query }}
+                        {% if obj.session.is_expired %}
+                            <span class="btn btn-sm btn-danger ml-5">Expired</span> 
+                        {% else %}
+                            <span class="btn btn-sm btn-success ml-5">Running</span> 
+                        {% endif %}
+                    </a>
+                        
                     {% endfor %}
             </div>
         </div>

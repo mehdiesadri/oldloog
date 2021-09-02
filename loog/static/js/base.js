@@ -29,3 +29,38 @@ $('document').ready(function() {
     });
 
 });
+
+const notificationSocket = new WebSocket(
+    'ws://' + window.location.host + '/ws/notifications/'
+);
+
+notificationSocket.onopen = function(e) {
+    console.log("Opened...");
+}
+
+notificationSocket.onmessage = function(e) {
+    let data = JSON.parse(e.data);
+    let type = data.type;
+
+    switch (data.type) {
+        case 'system_message':
+            if (data.head === "REDIRECT") {
+                if (window.location.href !== data.url) {
+                    window.location.href = data.url;
+                }
+            }
+            break;
+
+        case 'notification_message':
+            break;
+
+        default:
+            console.log(data);
+            break;
+    }
+}
+
+notificationSocket.onclose = function(e) {
+    console.log("The socket closed....");
+    console.log(e);
+}

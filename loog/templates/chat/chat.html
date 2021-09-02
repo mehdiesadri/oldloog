@@ -13,19 +13,21 @@
             <div class="col-md-8 col-sm-12">
                 <div class="card card-bordered mt-3 mb-3">
                     <div class="card-header">
-                        <h4 class="card-title"><strong>Chat</strong></h4> <a class="btn btn-xs btn-secondary" href="#" data-abc="true">Let's Chat App</a>
+                        <h4 class="card-title"><strong>{{ session_obj.query }}</strong></h4> <btn class="btn btn-xs btn-secondary" id="btn_countdown" data-abc="true">Timer</btn>
                     </div>
                     <div class="ps-container ps-theme-default ps-active-y" id="chat-content" style="overflow-y: scroll !important; height:300px !important;">
           
                     </div>
+                    {% if not session_obj.is_expired %}
                     <div class="publisher bt-1 border-light"> <img class="avatar avatar-xs" src="{{ request.user.profile.get_avatar }}" alt="user-avatar">
-                    <input class="publisher-input" id="chat_text" name="text" type="text" placeholder="Write something">
-                    <span class="publisher-btn file-group text-dark"> 
-                        <label for="chat_file" class="fa fa-paperclip file-browser"></label>
-                        <input id="chat_file" name="attachment" type="file">
-                    </span> 
-                    <button class="publisher-btn text-info" onclick="send_message();" data-abc="true"><i class="fa fa-paper-plane"></i></button> </div>
-                </div>
+                        <input class="publisher-input" id="chat_text" name="text" type="text" placeholder="Write something">
+                        <span class="publisher-btn file-group text-dark"> 
+                            <label for="chat_file" class="fa fa-paperclip file-browser"></label>
+                            <input id="chat_file" name="attachment" type="file">
+                        </span> 
+                        <button class="publisher-btn text-info" onclick="send_message();" data-abc="true"><i class="fa fa-paper-plane"></i></button> </div>
+                    </div>
+                    {% endif %}
             </div>
         </div>
 
@@ -33,7 +35,7 @@
 
 {% block js %}
 <script>
-    const roomName = "{{ room_name }}";
+    const roomName = "{{ session_obj.room_name }}";
     const userID = {{ request.user.id }};
 </script>
 <script src="{% static 'js/chat.js' %}"></script>

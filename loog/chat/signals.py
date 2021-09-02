@@ -9,12 +9,12 @@ from .api.serializers import MessageSerializer
 
 # New message --> Notify users
 @receiver(post_save, sender=Message)
-def update_stock(sender, instance, created, **kwargs):
+def chat_notification(sender, instance, created, **kwargs):
     if created:
-        print(instance)
         notification = {
             "type": "chat_message",
-            "message": MessageSerializer(instance=instance).data,
+            "message": "chat",
+            "data": MessageSerializer(instance=instance).data
         }
 
         channel_layer = get_channel_layer()
