@@ -1,14 +1,15 @@
 from django.contrib import messages
+from django.http.response import HttpResponseForbidden
 from django.views import generic
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import gettext_lazy as _
 
-from core.tasks import send_in_app_notification
 from core.mixins import ProfileRequiredMixin
 from core.decorators import profile_required
 from discovery.selectors import get_tag_count
+from notifications.models import Notification
 from .models import ChatSessionUser, ChatSession
-from .utils import is_session_invalid
+from .utils import is_session_invalid, is_user_in_session
 
 
 class ChatSessionList(ProfileRequiredMixin, generic.ListView):
@@ -21,12 +22,22 @@ class ChatSessionList(ProfileRequiredMixin, generic.ListView):
 class ChatSessionView(ProfileRequiredMixin, generic.TemplateView):
     template_name = "chat/chat.html"
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+    def get_session(self):
         room_name = self.kwargs.get("room_name")
         session_obj = get_object_or_404(ChatSession, room_name=room_name)
+        return session_obj
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        session_obj = self.get_session()
         context["session_obj"] = session_obj
         return context
+    
+    def dispatch(self, request, *args, **kwargs):
+        session_obj = self.get_session()
+        if not is_user_in_session(self.request.user, session_obj):
+            return HttpResponseForbidden("Access Denied.")
+        return super().dispatch(request, *args, **kwargs)
 
 
 @profile_required
@@ -46,24 +57,23 @@ def join_chat_session(request, room_name):
     )
     if in_session_count == 1:
         # Notify inviter
-        payload = {
-            "type": "notification_message",
-            "message": "redirect",
-            "data": {
-                    "url":  session.get_absolute_url(),
-            }
-        }
-        send_in_app_notification.delay(
-            in_session_first.user.id,
-            payload
+        Notification.objects.create(
+            user=in_session_first.user,
+            head="REDIRECT",
+            body="This is a system notification for redirecting.",
+            url=session.get_absolute_url(),
+            is_system=True,
+            is_internal=True
         )
-
     return redirect(session_user.get_absolute_url())
 
 
 @profile_required
 def session_post_tag(request, room_name):
     session = get_object_or_404(ChatSession, room_name=room_name)
+    if not is_user_in_session(request.user, session):
+        return HttpResponseForbidden("Access Denied.")
+    
     session_users = session.chatsessionuser_set.exclude(user=request.user)
     objects = []
     for i in session_users:
