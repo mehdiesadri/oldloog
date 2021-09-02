@@ -56,7 +56,6 @@ def join_chat_session(request, room_name):
         session=session
     )
     if in_session_count == 1:
-        # Notify inviter
         Notification.objects.create(
             user=in_session_first.user,
             head="REDIRECT",

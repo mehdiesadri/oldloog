@@ -22,7 +22,7 @@ class ChatSession(DateTimeModel):
         return self.get_expire_datetime() < timezone.now()
     
     def get_expire_datetime(self):
-        return self.created_at + timezone.timedelta(seconds=210)
+        return self.created_at + timezone.timedelta(seconds=330)
     
     def get_absolute_url(self):
         return reverse("chat:join-session", kwargs={"room_name": self.room_name})

@@ -4,7 +4,7 @@ from django.dispatch import receiver
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 
-from .models import Message, ChatSessionUser
+from .models import Message
 from .api.serializers import MessageSerializer
 
 # New message --> Notify users
