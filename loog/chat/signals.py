@@ -7,9 +7,12 @@ from channels.layers import get_channel_layer
 from .models import Message
 from .api.serializers import MessageSerializer
 
-# New message --> Notify users
 @receiver(post_save, sender=Message)
 def chat_notification(sender, instance, created, **kwargs):
+    """
+    Sends the message to room via ChatConsumer.
+    """
+
     if created:
         notification = {
             "type": "chat_message",
