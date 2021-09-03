@@ -153,8 +153,8 @@ PASSWORD_RESET_TIMEOUT_DAYS = 1
 # OAuth
 AUTHLIB_OAUTH_CLIENTS = {
     'google': {
-        'client_id': '149707931788-pa3njrbturb8u6d9nshh9asja7p04mlg.apps.googleusercontent.com',
-        'client_secret': 'pGv_qh9wgFW9YNDnVnEwNvP-'
+        'client_id': os.environ.get('GOOGLE_CLIENT_ID', ''),
+        'client_secret': os.environ.get('GOOGLE_CLIENT_SECRET', '')
     }
 }
 
@@ -192,7 +192,7 @@ DEFAULT_FROM_EMAIL = 'loogtest0@gmail.com'
 # https://web-push-codelab.glitch.me/
 
 WEBPUSH_SETTINGS = {
-   "VAPID_PUBLIC_KEY": "BItDtGwdGRnST9VhBeMR5ZnSbCej3hxwVBUyr5f5AF-lHQU6hr1s7d_1lHbLGBUKqoXasEqbIYgeqOuKOC9SCF4",
-   "VAPID_PRIVATE_KEY": "k5Sdm4d-rAGj55i2icchhcYEiVenXPdg368_zWofa4o",
-   "VAPID_ADMIN_EMAIL": "loogtest0@gmail.com"
+   "VAPID_PUBLIC_KEY": os.environ.get("VAPID_PUBLIC_KEY", ""),
+   "VAPID_PRIVATE_KEY": os.environ.get("VAPID_PRIVATE_KEY", ""),
+   "VAPID_ADMIN_EMAIL": os.environ.get("VAPID_ADMIN_EMAIL", DEFAULT_FROM_EMAIL),
 }
