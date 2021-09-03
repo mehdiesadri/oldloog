@@ -21,10 +21,12 @@ class Notification(DateTimeModel):
 
     def get_payload(self):
         return {
-                'head': self.title,
+                'id': self.id,
+                'title': self.title,
                 'body': self.body,
-                'icon': self.icon_url,
-                'url': self.url
+                'icon_url': self.icon_url,
+                'url': self.url,
+                'created_at': self.created_at
             }
     
     def send_as_email(self):
