@@ -44,7 +44,6 @@ function add_notification(notification) {
 $('document').ready(function () {
     // Document is ready.
     console.log("Seyyed Ali Ayati");
-    $(".alert-error").toggleClass('alert-error', 'alert-danger');
 
     // Setup AJAX
     $.ajaxSetup({
@@ -102,7 +101,7 @@ notificationSocket.onmessage = function (e) {
 
     switch (data.type) {
         case 'system_message':
-            if (data.head === "REDIRECT") {
+            if (data.title === "REDIRECT") {
                 if (window.location.href !== data.url) {
                     window.location.href = data.url;
                 }

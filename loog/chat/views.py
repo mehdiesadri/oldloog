@@ -51,14 +51,14 @@ def join_chat_session(request, room_name):
     in_session_count = in_session.count()
     in_session_first = in_session.first()
 
-    session_user, _ = ChatSessionUser.objects.get_or_create(
+    session_user, created = ChatSessionUser.objects.get_or_create(
         user=request.user,
         session=session
     )
     if in_session_count == 1:
         Notification.objects.create(
             user=in_session_first.user,
-            head="REDIRECT",
+            title="REDIRECT",
             body="This is a system notification for redirecting.",
             url=session.get_absolute_url(),
             is_system=True,

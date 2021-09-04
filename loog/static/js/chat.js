@@ -3,7 +3,7 @@ var input = document.getElementById("chat_text");
 
 // Execute a function when the user releases a key on the keyboard
 if (input) {
-    input.addEventListener("keyup", function(event) {
+    input.addEventListener("keyup", function (event) {
         var code;
 
         if (event.key !== undefined) {
@@ -29,27 +29,28 @@ const expireEndpoint = `/api/chat/v1/session/${roomName}/expire/`;
 $.ajax({
     url: expireEndpoint,
     method: 'get',
-    success: function(data) {
+    success: function (data) {
         if (data.is_expired) {
             document.getElementById("btn_countdown").innerHTML = "EXPIRED";
         } else {
             // start timer
-            var countDownDate = new Date(data.timestamp).getTime();
-            var x = setInterval(function() {
-                var now = new Date().getTime();
-                var distance = countDownDate - now;
-                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            const countDownDate = new Date(data.timestamp).getTime();
+            let x = setInterval(function () {
+                let now = new Date().getTime();
+                let distance = countDownDate - now;
+                let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                let seconds = Math.floor((distance % (1000 * 60)) / 1000);
                 document.getElementById("btn_countdown").innerHTML = minutes + "m " + seconds + "s ";
 
                 if (distance < 0) {
                     clearInterval(x);
                     document.getElementById("btn_countdown").innerHTML = "EXPIRED";
+                    window.location.href = `/chat/${roomName}/tag/`;
                 }
             }, 1000);
         }
     },
-    error: function(error) {
+    error: function (error) {
         console.error(error);
     }
 });
@@ -58,8 +59,9 @@ const chatSocket = new WebSocket(
     'ws://' + window.location.host + '/ws/' + roomName + "/"
 );
 
-chatSocket.onmessage = function(e) {
+chatSocket.onmessage = function (e) {
     let data = JSON.parse(e.data);
+    console.log(data);
     let message = data.message;
 
     if (message === "chat") {
@@ -76,7 +78,7 @@ chatSocket.onmessage = function(e) {
     scrollToBottom();
 }
 
-chatSocket.onclose = function(e) {
+chatSocket.onclose = function (e) {
     console.log("The socket closed....");
 }
 
@@ -106,12 +108,12 @@ function send_message() {
         data: formData,
         processData: false,
         contentType: false,
-        success: function(data) {
+        success: function (data) {
             console.log(data);
             message_input.val("");
             message_attachment.val("");
         },
-        error: function(error) {
+        error: function (error) {
             console.error(error);
         }
     });
@@ -156,7 +158,7 @@ function fetch_messages(roomName) {
     $.ajax({
         url: messageEndpoint + '?limit=1000',
         method: "GET",
-        success: function(data) {
+        success: function (data) {
             data.results.reverse().forEach(message => {
                 console.log(message);
                 if (message.sender == userID) {
@@ -168,7 +170,7 @@ function fetch_messages(roomName) {
 
             scrollToBottom();
         },
-        error: function(error) {
+        error: function (error) {
             console.error(error);
         }
     });
