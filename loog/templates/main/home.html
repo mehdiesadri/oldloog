@@ -4,52 +4,51 @@
 {% block title %} LOOG {% endblock %}
 {% block content %}
 
-    <div class="container">
-        <div class="row mt-5">
-            <div class="col-12">
-                <div class="d-flex flex-column justify-content-center">
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="d-flex flex-column justify-content-center">
 
-                    <div class="mx-auto">
+                <!-- <div class="mx-auto">
                         <img src="{% static 'img/brand/loog.png' %}" class="ml-auto" alt="loog-logo" width="200" height="200"> 
-                    </div>                    
+                    </div>                     -->
 
-                    <div class="mx-5">
-                        <form onsubmit="return search();">
-                            <div class="input-group">
-                                <input type="text" id="txt_query" name="query" class="form-control" placeholder="Subject..">
-                                <div class="input-group-append">
-                                    <button id="btn_submit" class="btn btn-secondary" type="submit" value="search">
-                                        <i class="fa fa-search"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div class="alert alert-info mt-3" role="alert">
-                        <p class="font-weight-light mt-3" data-toggle="tooltip"
+                <div class="alert alert-info mt-3" role="alert">
+                    <p class="font-weight-light mt-3" data-toggle="tooltip"
                         title='Example: "Nike Air Max 720 or Adidas Ultraboost 19" or "doctor, fracture, finger, pain"'>
-                            Ask
-                            a
-                            question, or search to get connected to online experts or
-                            who can chat about the subject.</p>
-                    </div>
-
-
+                        Ask
+                        a
+                        question, or search to get connected to online experts or
+                        who can chat about the subject.</p>
                 </div>
-                
+
+                <div class="mx-5">
+                    <form onsubmit="return search();">
+                        <div class="input-group">
+                            <input type="text" id="txt_query" name="query" class="form-control" placeholder="Subject..">
+                            <div class="input-group-append">
+                                <button id="btn_submit" class="btn btn-secondary" type="submit" value="search">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
             </div>
-        </div>        
-    
 
-        <div class="row">
-            <div class="col-12">
-                <div id="loading" class="d-none">
-                    <b>Searching..., Please wait!</b>
-                </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-12">
+            <div id="loading" class="d-none">
+                <b>Searching..., Please wait!</b>
             </div>
         </div>
     </div>
+</div>
 
 {% endblock %}
 
