@@ -62,10 +62,10 @@ class SearchUserAPI(generics.ListAPIView):
         if self.request.user.id in user_score:
             user_score.pop(self.request.user.id)
         payload = {
-            'head': 'New chat request',
+            'title': 'New chat request',
             'body': f'Query: {query}',
             'url': session_obj.get_absolute_url(),
-            'icon': self.request.user.profile.get_avatar()
+            'icon_url': self.request.user.profile.get_avatar()
         }
         send_notifications(user_score.keys(), payload)
         return User.objects.filter(id__in=user_score.keys())

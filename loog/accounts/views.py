@@ -234,6 +234,7 @@ class InvitePage(SuccessMessageMixin, ProfileRequiredMixin, generic.CreateView):
         if get_invites_count(self.request.user) <= 4:
             invited.inviter = self.request.user
             invited.save()
+            invited.send_invitation_email(host_name=self.request.build_absolute_uri("/")[:-1])
         else:
             messages.error(self.request, message=_("You cannot invite more than 5 friends."))
             return redirect("accounts:invite")

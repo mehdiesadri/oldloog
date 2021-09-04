@@ -1,15 +1,18 @@
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from asgiref.sync import async_to_sync
-from channels.layers import get_channel_layer
-
-from .models import Message
 from .api.serializers import MessageSerializer
+from .models import Message
 
-# New message --> Notify users
+
 @receiver(post_save, sender=Message)
 def chat_notification(sender, instance, created, **kwargs):
+    """
+    Sends the message to room via ChatConsumer.
+    """
+
     if created:
         notification = {
             "type": "chat_message",
@@ -21,4 +24,4 @@ def chat_notification(sender, instance, created, **kwargs):
 
         async_to_sync(channel_layer.group_send)(
             "chat_{}".format(instance.session.room_name), notification
-            )
+        )

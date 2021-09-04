@@ -17,9 +17,3 @@ def create_user_profile(sender, instance, created, **kwargs):
     except Profile.DoesNotExist:
         logging.warning("discovery.signals.create_user_profile: Profile does not exists.")
         Profile.objects.create(user=instance)
-
-
-@receiver(post_save, sender=InvitedUser)
-def invite_user(sender, instance, created, **kwargs):
-    if created or not instance.is_registered:
-        instance.send_invitation_email()
