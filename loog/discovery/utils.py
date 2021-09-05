@@ -1,18 +1,17 @@
-import redis
-import pickle
 import logging
-import pytz
+import pickle
+from collections import defaultdict
 from datetime import datetime
+
+import pytz
+import redis
+from django.conf import settings
+from django.db.models import Count
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.util import ngrams
-from collections import defaultdict
 
-from django.db.models import Count
-from django.conf import settings
-
-from core.tasks import send_web_push_notification
-
+from notifications.models import Notification
 from .models import TagAssignment, Tag
 
 logger = logging.getLogger(__name__)
@@ -20,7 +19,7 @@ redis_db = redis.Redis(
     host=settings.REDIS_HOST,
     port=settings.REDIS_PORT,
     db=2
-    )
+)
 
 
 def get_tag_counts_in_assignments(assignments) -> dict:
@@ -64,7 +63,7 @@ def generate_ngrams(tokens, n=3):
 
 def update_inverted_index():
     # key: tag, value: {(user, count),...}
-    last_update = None # redis_db.get("INVERTED_INDEX_UPDATED_DATETIME")
+    last_update = None  # redis_db.get("INVERTED_INDEX_UPDATED_DATETIME")
     if last_update is not None:
         last_update = last_update.decode('utf-8')
         last_update = datetime.strptime(last_update, "%m/%d/%Y, %H:%M:%S")
@@ -74,7 +73,8 @@ def update_inverted_index():
 
     all_tags = Tag.objects.all()
     for tag in all_tags:
-        annotated_tags = TagAssignment.objects.filter(tag=tag, updated_at__gt=last_update).values_list('receiver').annotate(
+        annotated_tags = TagAssignment.objects.filter(tag=tag, updated_at__gt=last_update).values_list(
+            'receiver').annotate(
             total=Count('receiver')).order_by('-total')
         redis_db.set(str(tag.name), pickle.dumps(annotated_tags))
 
@@ -95,7 +95,7 @@ def find_users(query: str):
             in_redis = redis_db.get(gram)
             if in_redis is None:
                 logger.info(f"{gram} is not in redis.")
-                continue   
+                continue
             user_counts = pickle.loads(in_redis)
             for i in user_counts:
                 user_score[i[0]] += i[1] * n
@@ -104,4 +104,8 @@ def find_users(query: str):
 
 def send_notifications(user_ids, payload):
     for user_id in user_ids:
-        send_web_push_notification.delay(user_id, payload)
+        Notification.objects.create(
+            user_id=user_id,
+            is_webpush=True,
+            **payload
+        )
