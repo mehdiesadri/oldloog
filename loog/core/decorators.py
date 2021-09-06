@@ -24,7 +24,7 @@ def profile_required(function):
         if profile.is_completed and tag_exists:
             return function(request, *args, **kwargs)
         else:
-            messages.add_message(request, messages.ERROR, _("Please complete your profile."))
+            messages.error(request, _("Please complete your profile."))
             return redirect("accounts:profile_update")
 
     return wrap

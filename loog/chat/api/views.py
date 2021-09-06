@@ -1,16 +1,15 @@
 from django.shortcuts import get_object_or_404
-
-from rest_framework import views, generics
-from rest_framework.permissions import IsAuthenticated
+from rest_framework import views, generics, viewsets, mixins
 from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from .serializers import MessageSerializer
-from chat.models import ChatSession
+from chat.models import ChatSession, ChatSessionUser
+from .serializers import MessageSerializer, UserSessionSerializer
 
 
 class SessionMessageAPI(generics.ListCreateAPIView):
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated,)
     serializer_class = MessageSerializer
 
     def get_chat_session(self):
@@ -19,7 +18,7 @@ class SessionMessageAPI(generics.ListCreateAPIView):
     def get_queryset(self):
         session = self.get_chat_session()
         return session.messages.all()
-    
+
     def perform_create(self, serializer):
         if self.get_chat_session().is_expired:
             raise ValidationError("Chat session is expired!")
@@ -28,8 +27,9 @@ class SessionMessageAPI(generics.ListCreateAPIView):
             session=self.get_chat_session()
         )
 
+
 class SessionExpireAPI(views.APIView):
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated,)
 
     def get_session(self, room_name):
         return get_object_or_404(ChatSession, room_name=room_name)
@@ -40,3 +40,15 @@ class SessionExpireAPI(views.APIView):
             "timestamp": session.get_expire_datetime(),
             "is_expired": session.is_expired
         }, status=200)
+
+
+class UserSessionViewSet(
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    viewsets.GenericViewSet
+):
+    serializer_class = UserSessionSerializer
+
+    def get_queryset(self):
+        return ChatSessionUser.objects.filter(user=self.request.user)

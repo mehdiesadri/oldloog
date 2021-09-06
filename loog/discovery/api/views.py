@@ -3,11 +3,11 @@ import uuid
 from rest_framework import mixins, viewsets, permissions, generics, status
 from rest_framework.response import Response
 
-from discovery.models import Tag, TagAssignment
-from discovery.utils import find_users, send_notifications
-from chat.models import ChatSession, ChatSessionUser
 from accounts.api.serializers import UserSerializer
 from accounts.models import User
+from chat.models import ChatSession, ChatSessionUser
+from discovery.models import Tag, TagAssignment
+from discovery.utils import find_users, send_notifications
 from .serializers import TagSerializer, TagAssignmentSerializer
 
 
@@ -23,36 +23,38 @@ class TagViewSet(mixins.ListModelMixin,
 class TagAssignmentViewSet(viewsets.ModelViewSet):
     """CRUD API of TagAssignment for admin users"""
     serializer_class = TagAssignmentSerializer
-    permission_classes = (permissions.IsAdminUser, )
+    permission_classes = (permissions.IsAdminUser,)
     queryset = TagAssignment.objects.all()
 
+
 class UserTagAssignmentViewSet(mixins.ListModelMixin,
-                 mixins.CreateModelMixin,
-                 mixins.RetrieveModelMixin,
-                 viewsets.GenericViewSet):
+                               mixins.CreateModelMixin,
+                               mixins.RetrieveModelMixin,
+                               viewsets.GenericViewSet):
     """CR API of TagAssignment for authenticated users"""
     queryset = TagAssignment.objects.all()
     serializer_class = TagAssignmentSerializer
 
+
 class SearchUserAPI(generics.ListAPIView):
-    permission_classes = (permissions.IsAuthenticated, )
+    permission_classes = (permissions.IsAuthenticated,)
     serializer_class = UserSerializer
 
     def get_queryset(self):
         user = self.request.user
         query = self.request.query_params.get('query', '').strip()
-        
+
         if query == '':
             return Response(
                 data={
                     "error": "Required query parameter: query."
-                    },
+                },
                 status=status.HTTP_400_BAD_REQUEST
-                )
-        
+            )
+
         session_obj = ChatSession.objects.create(
-           query=query,
-           room_name=uuid.uuid4().hex[:10].upper()
+            query=query,
+            room_name=uuid.uuid4().hex[:10].upper()
         )
         ChatSessionUser.objects.create(
             user=user,
@@ -69,4 +71,3 @@ class SearchUserAPI(generics.ListAPIView):
         }
         send_notifications(user_score.keys(), payload)
         return User.objects.filter(id__in=user_score.keys())
-

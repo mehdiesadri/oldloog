@@ -12,21 +12,21 @@ class ChatSession(DateTimeModel):
 
     def __str__(self) -> str:
         return f"Room: {self.room_name}"
-    
+
     @property
     def is_open_for_first_join(self):
-        return (timezone.now() - self.created_at).seconds > 30
+        return (timezone.now() - self.created_at).seconds < 30
 
     @property
     def is_expired(self):
         return self.get_expire_datetime() < timezone.now()
-    
+
     def get_expire_datetime(self):
         return self.created_at + timezone.timedelta(seconds=330)
-    
+
     def get_absolute_url(self):
         return reverse("chat:join-session", kwargs={"room_name": self.room_name})
-    
+
 
 class ChatSessionUser(DateTimeModel):
     user = models.ForeignKey(
@@ -37,16 +37,16 @@ class ChatSessionUser(DateTimeModel):
         db_index=True,
     )
     session = models.ForeignKey(ChatSession, on_delete=models.CASCADE)
+    is_tagged = models.BooleanField(default=False)
 
     def __str__(self) -> str:
         return f"{self.user} | {self.session}"
-    
+
     def get_absolute_url(self):
         return reverse("chat:session", kwargs={"room_name": self.session.room_name})
-    
+
     class Meta:
-        ordering = ("-created_at", )
-    
+        ordering = ("-created_at",)
 
 
 class Message(DateTimeModel):
@@ -69,6 +69,6 @@ class Message(DateTimeModel):
 
     def __str__(self):
         return str(self.id)
-    
+
     class Meta:
-        ordering = ("-created_at", )
+        ordering = ("-created_at",)
