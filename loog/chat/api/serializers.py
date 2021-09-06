@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
-from chat.models import Message
+from chat.models import Message, ChatSessionUser
 from rest_framework import serializers
 
 
@@ -18,3 +18,10 @@ class UserModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ("username",)
+
+
+class UserSessionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ChatSessionUser
+        fields = ("id", "user", "session", "is_tagged", )
+        read_only_fields = ("id", )

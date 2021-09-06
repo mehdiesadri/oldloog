@@ -70,6 +70,12 @@ def join_chat_session(request, room_name):
 @profile_required
 def session_post_tag(request, room_name):
     session = get_object_or_404(ChatSession, room_name=room_name)
+    session_user = get_object_or_404(ChatSessionUser, user=request.user, session=session)
+
+    if session_user.is_tagged:
+        messages.info(request, _("You already tagged this session."))
+        return redirect("main:homepage")
+
     if not is_user_in_session(request.user, session):
         return HttpResponseForbidden("Access Denied.")
     
@@ -84,5 +90,6 @@ def session_post_tag(request, room_name):
     context = {
         'session': session,
         'objects': objects,
+        'session_user': session_user
     }
     return render(request, "chat/post_tag.html", context)

@@ -15,17 +15,27 @@
                 <div class="card p-4 mt-3">
                     <div class="card-body">
                         <h2 class="card-title">Provide your feedback by setting tags.</h2>
-                            <form class="mt-2" onsubmit="return submit_tags();">
+                        <form class="mt-2" onsubmit="return submit_tags();">
                             {% for obj in objects %}
-                                <div class="form-group">
-                                    <label for="txt_tag_{{ obj.id }}">Set tags for {{ obj.user }}</label>
-                                    <input type="text" value="{{ obj.top_tags }}" data-role="tagsinput" data-userid="{{ obj.user.id }}" class="form-control tag-text-input" id="txt_tag_{{ obj.id }}" aria-describedby="txt_tag_{{ obj.id }}">
-                                    <small id="help_txt_tag_{{ obj.id }}" class="form-text text-muted">Seprate tags by comma or pressing the enter key.</small>
+                                <div class="form-inline mb-4">
+                                    <div class="form-group">
+                                        <span class="avatar avatar-lg rounded-circle mr-2">
+                                            <img src="{{ obj.user.profile.get_avatar }}" alt="{{ obj.user }}">
+                                        </span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="txt_tag_{{ obj.id }}">Set tags for {{ obj.user }}</label>
+                                        <input type="text" value="{{ obj.top_tags }}" data-role="tagsinput"
+                                               data-userid="{{ obj.user.id }}" class="form-control tag-text-input"
+                                               id="txt_tag_{{ obj.id }}" aria-describedby="txt_tag_{{ obj.id }}">
+                                        <small id="help_txt_tag_{{ obj.id }}" class="form-text text-muted">Seprate tags
+                                            by comma or pressing the enter key.</small>
+                                    </div>
                                 </div>
                             {% endfor %}
-                                <button class="btn btn-primary" id="btn_submit" type="submit">Submit</button>
-                            </form>
-                        
+                            <button class="btn btn-primary mt-2" id="btn_submit" type="submit">Submit</button>
+                        </form>
+
                     </div>
                 </div>
             </div>
@@ -36,7 +46,8 @@
 {% block js %}
     <script src="{% static 'js/tagsinput.js' %}"></script>
     <script>
-    const UserID = {{ request.user.id }}
+        const UserID = {{ request.user.id }};
+        const SessionUserID = {{ session_user.id }};
     </script>
     <script src="{% static 'js/post_tag.js' %}"></script>
 {% endblock js %}

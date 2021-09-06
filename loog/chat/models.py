@@ -37,6 +37,7 @@ class ChatSessionUser(DateTimeModel):
         db_index=True,
     )
     session = models.ForeignKey(ChatSession, on_delete=models.CASCADE)
+    is_tagged = models.BooleanField(default=False)
 
     def __str__(self) -> str:
         return f"{self.user} | {self.session}"
