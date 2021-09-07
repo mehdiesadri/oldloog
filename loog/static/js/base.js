@@ -2,15 +2,15 @@ function notification_click(id, url) {
     $.ajax({
         url: `/api/notifications/v1/notifications/${id}/`,
         method: 'PATCH',
-        data: {'read': true},
-        success: function (data) {
+        data: { 'read': true },
+        success: function(data) {
             if (url !== 'null')
                 window.location.href = url;
             else {
-                $("#notification_"+id).remove();
+                $("#notification_" + id).remove();
             }
         },
-        error: function (error) {
+        error: function(error) {
             console.error(error);
         }
     });
@@ -41,13 +41,13 @@ function add_notification(notification) {
 }
 
 
-$('document').ready(function () {
+$('document').ready(function() {
     // Document is ready.
     console.log("Seyyed Ali Ayati");
 
     // Setup AJAX
     $.ajaxSetup({
-        beforeSend: function (xhr, settings) {
+        beforeSend: function(xhr, settings) {
             function getCookie(name) {
                 var cookieValue = null;
                 if (document.cookie && document.cookie != '') {
@@ -74,13 +74,13 @@ $('document').ready(function () {
     $.ajax({
         url: '/api/notifications/v1/notifications/',
         method: 'GET',
-        success: function (data) {
+        success: function(data) {
             $("#notificationCount").text(data.length);
             data.forEach(notification => {
                 add_notification(notification);
             });
         },
-        error: function (error) {
+        error: function(error) {
             console.error(error);
         }
     });
@@ -89,14 +89,14 @@ $('document').ready(function () {
 
 
 const notificationSocket = new WebSocket(
-    'ws://' + window.location.host + '/ws/notifications/'
+    'wss://' + window.location.host + '/ws/notifications/'
 );
 
-notificationSocket.onopen = function (e) {
+notificationSocket.onopen = function(e) {
     console.log("Opened...");
 }
 
-notificationSocket.onmessage = function (e) {
+notificationSocket.onmessage = function(e) {
     let data = JSON.parse(e.data);
 
     switch (data.type) {
@@ -118,7 +118,7 @@ notificationSocket.onmessage = function (e) {
     }
 }
 
-notificationSocket.onclose = function (e) {
+notificationSocket.onclose = function(e) {
     console.log("The socket closed....");
     console.log(e);
 }
