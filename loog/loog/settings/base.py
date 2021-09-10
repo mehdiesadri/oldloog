@@ -186,7 +186,7 @@ CHANNEL_LAYERS = {
 
 
 # SMTP
-DEFAULT_FROM_EMAIL = 'loogitlive0@gmail.com'
+DEFAULT_FROM_EMAIL = 'loogitlive@gmail.com'
 
 # https://www.digitalocean.com/community/tutorials/how-to-send-web-push-notifications-from-django-applications
 # https://web-push-codelab.glitch.me/
