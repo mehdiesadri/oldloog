@@ -106,6 +106,7 @@ def send_notifications(user_ids, payload):
     for user_id in user_ids:
         Notification.objects.create(
             user_id=user_id,
-            is_webpush=True,
+            is_internal=True,
+            is_system=True,
             **payload
         )

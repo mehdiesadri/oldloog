@@ -13,7 +13,5 @@ def send_notification(sender, instance, created, *args, **kwargs):
     if created:
         if instance.is_email:
             instance.send_as_email()
-        if instance.is_webpush:
-            instance.send_as_webpush()
         if instance.is_internal:
             instance.send_as_internal()
