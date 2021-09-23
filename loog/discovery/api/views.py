@@ -64,8 +64,8 @@ class SearchUserAPI(generics.ListAPIView):
         if self.request.user.id in user_score:
             user_score.pop(self.request.user.id)
         payload = {
-            'title': 'New chat request',
-            'body': f'Query: {query}',
+            'title': 'NEW_LOOG',
+            'body': f'User: {user}, Query: {query}',
             'url': session_obj.get_absolute_url(),
             'icon_url': self.request.user.profile.get_avatar()
         }
