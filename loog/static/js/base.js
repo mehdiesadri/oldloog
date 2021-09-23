@@ -97,6 +97,40 @@ function add_notification(notification) {
                                 </a>`);
 }
 
+function wait_list_click() {
+    Swal.fire({
+        title: 'Enter your email address:',
+        input: 'text',
+        inputAttributes: {
+            autocapitalize: 'off'
+        },
+        showCancelButton: true,
+        confirmButtonText: 'Join!',
+        showLoaderOnConfirm: true,
+        preConfirm: (email) => {
+            return fetch(`/api/accounts/v1/waitlist/?email=${email}`)
+                .then(response => {
+                    if (!response.ok) {
+                        console.log(response)
+                        throw new Error(response.statusText)
+                    }
+                    return response.json()
+                })
+                .catch(error => {
+                    Swal.showValidationMessage(
+                        `Request failed: ${error}`
+                    )
+                })
+        },
+        allowOutsideClick: () => !Swal.isLoading()
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire({
+                title: `Check your mailbox!`,
+            })
+        }
+    });
+}
 
 $('document').ready(function () {
     // Document is ready.
