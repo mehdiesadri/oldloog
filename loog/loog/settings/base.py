@@ -48,7 +48,6 @@ INSTALLED_APPS = [
     "channels",
     "crispy_forms",
     "rest_framework",
-    "webpush"
 ]
 
 MIDDLEWARE = [
@@ -187,12 +186,3 @@ CHANNEL_LAYERS = {
 
 # SMTP
 DEFAULT_FROM_EMAIL = 'loogitlive@gmail.com'
-
-# https://www.digitalocean.com/community/tutorials/how-to-send-web-push-notifications-from-django-applications
-# https://web-push-codelab.glitch.me/
-
-WEBPUSH_SETTINGS = {
-   "VAPID_PUBLIC_KEY": os.environ.get("VAPID_PUBLIC_KEY", ""),
-   "VAPID_PRIVATE_KEY": os.environ.get("VAPID_PRIVATE_KEY", ""),
-   "VAPID_ADMIN_EMAIL": os.environ.get("VAPID_ADMIN_EMAIL", DEFAULT_FROM_EMAIL),
-}

@@ -9,7 +9,7 @@ class NotificationSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'read', 'title', 'body',
             'icon_url', 'url', 'created_at',
-            'is_system', 'is_email', 'is_webpush', 'is_internal',
+            'is_system', 'is_email', 'is_internal',
             )
         read_only_fields = (
             'id', 'created_at',
