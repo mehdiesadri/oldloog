@@ -7,62 +7,63 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Discovery/Chat Application">
-    <meta name="vapid-key" content="BItDtGwdGRnST9VhBeMR5ZnSbCej3hxwVBUyr5f5AF-lHQU6hr1s7d_1lHbLGBUKqoXasEqbIYgeqOuKOC9SCF4">
+    <meta name="vapid-key"
+        content="BItDtGwdGRnST9VhBeMR5ZnSbCej3hxwVBUyr5f5AF-lHQU6hr1s7d_1lHbLGBUKqoXasEqbIYgeqOuKOC9SCF4">
 
     <!-- Fonts -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700">
 
     <!-- Icons -->
     <link rel="stylesheet" href="{% static 'vendor/nucleo/css/nucleo.css' %}" type="text/css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
 
     <!-- Argon CSS -->
     <link rel="stylesheet" href="{% static 'css/argon.css' %}" type="text/css">
 
     <!-- Global Base CSS -->
-    <link rel="stylesheet" href="{% static 'css/base.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}" />
 
 
     {% block css %}
 
     {% endblock %}
 
-    <title>{% block title %}Loog{% endblock %}</title>
+    <title>{% block title %}LOOG{% endblock %}</title>
 </head>
 
 <body>
 
-<div class="main-content" id="panel">
-    {% include 'header.html' %}
+    <div class="main-content" id="panel">
+        {% include 'header.html' %}
 
-    {% if messages %}
+        {% if messages %}
         {% include 'messages.html' with messages=messages %}
-    {% endif %}
+        {% endif %}
 
-    <div class="container-fluid">
-        {% block content %}{% endblock %}
-        {% include 'footer.html' %}
+        <div class="container-fluid">
+            {% block content %}{% endblock %}
+            {% include 'footer.html' %}
+        </div>
     </div>
-</div>
 
 
-<!-- Core -->
-<script src="{% static 'vendor/jquery/dist/jquery.min.js' %}"></script>
-<script src="{% static 'vendor/bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>
-<script src="{% static 'vendor/js-cookie/js.cookie.js' %}"></script>
-<script src="{% static 'vendor/jquery.scrollbar/jquery.scrollbar.min.js' %}"></script>
-<script src="{% static 'vendor/jquery-scroll-lock/jquery-scrollLock.min.js' %}"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" async=""></script>
+    <!-- Core -->
+    <script src="{% static 'vendor/jquery/dist/jquery.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'vendor/js-cookie/js.cookie.js' %}"></script>
+    <script src="{% static 'vendor/jquery.scrollbar/jquery.scrollbar.min.js' %}"></script>
+    <script src="{% static 'vendor/jquery-scroll-lock/jquery-scrollLock.min.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" async=""></script>
 
-<!-- Argon JS -->
-<script src="{% static 'js/argon.js' %}"></script>
+    <!-- Argon JS -->
+    <script src="{% static 'js/argon.js' %}"></script>
 
-<!-- Global Base JS -->
-<script src="{% static 'js/base.js' %}"></script>
+    <!-- Global Base JS -->
+    <script src="{% static 'js/base.js' %}"></script>
 
-{% block js %}
+    {% block js %}
 
-{% endblock %}
+    {% endblock %}
 </body>
 
 </html>
