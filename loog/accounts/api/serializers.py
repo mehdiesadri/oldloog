@@ -11,7 +11,6 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = User
         fields = ["id", "profile", "username", "email", "first_name", "last_name", ]
@@ -23,3 +22,7 @@ class InvitedUserSerializer(serializers.ModelSerializer):
         model = InvitedUser
         fields = ["id", "inviter", "email", "is_registered", "comma_separated_tags", ]
         read_only_fields = ["id", ]
+
+
+class WaitListSerializer(serializers.Serializer):
+    email = serializers.EmailField()
