@@ -31,9 +31,6 @@
 
     EMAIL_PASSWORD=place-password-here
 
-    VAPID_PUBLIC_KEY=place-key-here
-    VAPID_PRIVATE_KEY=place-key-here
-
     GOOGLE_CLIENT_ID=place-key-here
     GOOGLE_CLIENT_SECRET=place-key-here
     ```

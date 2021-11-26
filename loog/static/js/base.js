@@ -11,6 +11,23 @@ const notificationSocket = new WebSocket(
     wsProtocol + window.location.host + '/ws/notifications/'
 );
 
+// Initialize Firebase
+const firebaseConfig = {
+    apiKey: "AIzaSyDGRGwxGQ5irefOaJyYX3Neoh7NU8O1M2Q",
+    authDomain: "loog-test-notification.firebaseapp.com",
+    projectId: "loog-test-notification",
+    storageBucket: "loog-test-notification.appspot.com",
+    messagingSenderId: "504975596104",
+    appId: "1:504975596104:web:ef4559f61eb8db3437167d",
+    measurementId: "G-YTSSV408R3"
+};
+
+firebase.initializeApp(firebaseConfig);
+console.log("Firebase Initialized...");
+
+// Firebase Messaging Service
+const messaging = firebase.messaging();
+
 notificationSocket.onmessage = function (e) {
     let data = JSON.parse(e.data);
 
@@ -59,7 +76,7 @@ function notification_click(id, url) {
     $.ajax({
         url: `/api/notifications/v1/notifications/${id}/`,
         method: 'PATCH',
-        data: {'read': true},
+        data: { 'read': true },
         success: function (data) {
             if (url !== 'null')
                 window.location.href = url;
@@ -132,6 +149,68 @@ function wait_list_click() {
     });
 }
 
+function sendTokenToServer(currentToken) {
+    console.log("Token ", currentToken);
+
+    if (!isTokenSentToServer()) {
+        $.ajax({
+            url: "/api/fcm/devices/",
+            method: "POST",
+            async: false,
+            data: {
+                'registeration_id': currentToken,
+                'type': 'web'
+            },
+            success: function (data) {
+                console.log(data);
+                setTokenSentToServer(true);
+            },
+            error: function (err) {
+                console.log(err);
+                setTokenSentToServer(false);
+            }
+        });
+
+    } else {
+        console.log('Token already sent to server so won\'t send it again ' +
+            'unless it changes');
+    }
+}
+
+function isTokenSentToServer() {
+    return window.localStorage.getItem("sentToServer") === "1";
+}
+
+function setTokenSentToServer(sent) {
+    if (sent) {
+        window.localStorage.setItem("sentToServer", "1");
+    } else {
+        window.localStorage.setItem("sentToServer", "0");
+    }
+}
+
+
+function requestPermission() {
+    messaging.requestPermission().then(function () {
+        resetUI();
+    }).catch(function (err) {
+        console.log('Unable to get permission to notify.', err);
+    });
+}
+
+function resetUI() {
+    messaging.getToken().then(function (currentToken) {
+        if (currentToken) {
+            sendTokenToServer(currentToken);
+        } else {
+            setTokenSentToServer(false);
+        }
+    }).catch(function (err) {
+        setTokenSentToServer(false);
+    });
+}
+
+
 $('document').ready(function () {
     // Document is ready.
 
@@ -175,5 +254,28 @@ $('document').ready(function () {
             console.error(error);
         }
     });
+
+    messaging.onTokenRefresh(function () {
+        messaging.getToken().then(function (refreshedToken) {
+            console.log("Token refreshed.");
+            // Indicate that the new Instance ID token has not yet been sent to the
+            // app server.
+            setTokenSentToServer(false);
+            // Send Instance ID token to app server.
+            sendTokenToServer(refreshedToken);
+            resetUI();
+        }).catch(function (err) {
+            console.log("Unable to retrieve refreshed token ", err);
+        });
+    });
+
+    messaging.onMessage(function (payload) {
+        console.log("Message received. ", payload);
+    });
+
+
+    requestPermission();
+
+
 
 });
