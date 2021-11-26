@@ -192,6 +192,7 @@ function setTokenSentToServer(sent) {
 
 function requestPermission() {
     messaging.requestPermission().then(function () {
+        console.log("Has permission!");
         resetUI();
     }).catch(function (err) {
         console.log('Unable to get permission to notify.', err);
@@ -199,13 +200,16 @@ function requestPermission() {
 }
 
 function resetUI() {
+    console.log("In reset ui");
     messaging.getToken().then(function (currentToken) {
+        console.log(currentToken);
         if (currentToken) {
             sendTokenToServer(currentToken);
         } else {
             setTokenSentToServer(false);
         }
     }).catch(function (err) {
+        console.log(err);
         setTokenSentToServer(false);
     });
 }
