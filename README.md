@@ -33,6 +33,7 @@
 
     GOOGLE_CLIENT_ID=place-key-here
     GOOGLE_CLIENT_SECRET=place-key-here
+    GOOGLE_APPLICATION_CREDENTIALS=absolute_path_to_credentials.json
     ```
 4. Run `docker-compose up --build`
 

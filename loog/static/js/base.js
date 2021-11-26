@@ -274,7 +274,28 @@ $('document').ready(function () {
     });
 
     messaging.onMessage(function (payload) {
+        payload = payload.data;
         console.log("Message received. ", payload);
+
+        const notificationTitle = payload.title;
+        const notificationOptions = {
+            body: payload.body,
+            icon: payload.icon_url,
+        };
+
+        if (!("Notification" in window)) {
+            console.log("This browser does not support system notifications");
+        }
+        // Let's check whether notification permissions have already been granted
+        else if (Notification.permission === "granted") {
+            // If it's okay let's create a notification
+            var notification = new Notification(notificationTitle, notificationOptions);
+            notification.onclick = function (event) {
+                event.preventDefault(); // prevent the browser from focusing the Notification's tab
+                window.open(payload.url, '_blank');
+                notification.close();
+            }
+        }
     });
 
 
