@@ -154,11 +154,11 @@ function sendTokenToServer(currentToken) {
 
     if (!isTokenSentToServer()) {
         $.ajax({
-            url: "/api/fcm/devices/",
+            url: "/api/notifications/v1/devices/",
             method: "POST",
             async: false,
             data: {
-                'registeration_id': currentToken,
+                'registration_id': currentToken,
                 'type': 'web'
             },
             success: function (data) {
