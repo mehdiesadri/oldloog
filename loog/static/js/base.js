@@ -7,10 +7,6 @@ if (location.protocol !== 'https:') {
 const AUDIO = new Audio("https://assets.mixkit.co/sfx/preview/mixkit-positive-notification-951.mp3");
 AUDIO.load();
 
-const notificationSocket = new WebSocket(
-    wsProtocol + window.location.host + '/ws/notifications/'
-);
-
 // Initialize Firebase
 const firebaseConfig = {
     apiKey: "AIzaSyDGRGwxGQ5irefOaJyYX3Neoh7NU8O1M2Q",
@@ -28,55 +24,11 @@ console.log("Firebase Initialized...");
 // Firebase Messaging Service
 const messaging = firebase.messaging();
 
-notificationSocket.onmessage = function (e) {
-    let data = JSON.parse(e.data);
-
-    switch (data.type) {
-        case 'system_message':
-            if (data.title === "REDIRECT") {
-                if (window.location.href !== data.url) {
-                    window.location.href = data.url;
-                }
-            } else if (data.title === "NEW_LOOG") {
-                // Play and show popup
-                new Audio("https://assets.mixkit.co/sfx/preview/mixkit-positive-notification-951.mp3").play();
-
-                Swal.fire({
-                    titleText: 'New loog is available!',
-                    text: data.body,
-                    imageUrl: data.icon_url,
-                    imageAlt: 'user-profile',
-                    showDenyButton: true,
-                    confirmButtonText: 'Accept',
-                    denyButtonText: 'Reject',
-                }).then((result) => {
-                    /* Read more about isConfirmed, isDenied below */
-                    if (result.isConfirmed) {
-                        window.location.href = data.url;
-                    }
-                })
-            }
-            break;
-
-        case 'notification_message':
-            add_notification(data);
-            break;
-
-        default:
-            console.log(data);
-            break;
-    }
-}
-
-notificationSocket.onclose = function (e) {
-    console.log(e);
-}
-
 function notification_click(id, url) {
     $.ajax({
         url: `/api/notifications/v1/notifications/${id}/`,
         method: 'PATCH',
-        data: { 'read': true },
+        data: {'read': true},
         success: function (data) {
             if (url !== 'null')
                 window.location.href = url;
@@ -189,7 +141,6 @@ function setTokenSentToServer(sent) {
     }
 }
 
-
 function requestPermission() {
     messaging.requestPermission().then(function () {
         console.log("Has permission!");
@@ -244,21 +195,6 @@ $('document').ready(function () {
         }
     });
 
-    // Get Notifications
-    $.ajax({
-        url: '/api/notifications/v1/notifications/',
-        method: 'GET',
-        success: function (data) {
-            $("#notificationCount").text(data.length);
-            data.forEach(notification => {
-                add_notification(notification);
-            });
-        },
-        error: function (error) {
-            console.error(error);
-        }
-    });
-
     messaging.onTokenRefresh(function () {
         messaging.getToken().then(function (refreshedToken) {
             console.log("Token refreshed.");
@@ -274,33 +210,44 @@ $('document').ready(function () {
     });
 
     messaging.onMessage(function (payload) {
-        payload = payload.data;
-        console.log("Message received. ", payload);
+        let data = payload.data;
+        console.log("Message received. ", data);
 
-        const notificationTitle = payload.title;
-        const notificationOptions = {
-            body: payload.body,
-            icon: payload.icon_url,
-        };
+        switch (data.type) {
+            case 'system_message':
+                if (data.title === "REDIRECT") {
+                    if (window.location.href !== data.url) {
+                        window.location.href = data.url;
+                    }
+                } else if (data.title === "NEW_LOOG") {
+                    // Play and show popup
+                    new Audio("https://assets.mixkit.co/sfx/preview/mixkit-positive-notification-951.mp3").play();
 
-        if (!("Notification" in window)) {
-            console.log("This browser does not support system notifications");
-        }
-        // Let's check whether notification permissions have already been granted
-        else if (Notification.permission === "granted") {
-            // If it's okay let's create a notification
-            var notification = new Notification(notificationTitle, notificationOptions);
-            notification.onclick = function (event) {
-                event.preventDefault(); // prevent the browser from focusing the Notification's tab
-                window.open(payload.url, '_blank');
-                notification.close();
-            }
+                    Swal.fire({
+                        titleText: 'New loog is available!',
+                        text: data.body,
+                        imageUrl: data.icon_url,
+                        imageAlt: 'user-profile',
+                        showDenyButton: true,
+                        confirmButtonText: 'Accept',
+                        denyButtonText: 'Reject',
+                    }).then((result) => {
+                        /* Read more about isConfirmed, isDenied below */
+                        if (result.isConfirmed) {
+                            window.location.href = data.url;
+                        }
+                    })
+                }
+                break;
+
+            case 'notification_message':
+                add_notification(data);
+                break;
+            default:
+                console.log(data);
+                break;
         }
     });
 
-
     requestPermission();
-
-
-
 });
