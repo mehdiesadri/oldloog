@@ -1,12 +1,14 @@
+import logging
 from django.db import models
 
 from accounts.models import User
 from core.models import DateTimeModel
 from core.tasks import send_email, send_in_app_notification
 
-
 from firebase_admin.messaging import Notification as FirebaseNotification, Message
 from fcm_django.models import FCMDevice
+
+logger = logging.getLogger(__name__)
 
 
 class Notification(DateTimeModel):
@@ -24,7 +26,7 @@ class Notification(DateTimeModel):
     is_webpush = models.BooleanField(default=False)
 
     def get_payload(self):
-        return {
+        payload = {
             'id': str(self.id),
             'title': self.title,
             'body': self.body,
@@ -32,6 +34,11 @@ class Notification(DateTimeModel):
             'url': self.url,
             'created_at': str(self.created_at)
         }
+        if self.is_system:
+            payload.update({'type': 'system_message'})
+        else:
+            payload.update({'type': 'notification_message'})
+        return payload
 
     def send_as_email(self):
         send_email.delay(
@@ -42,34 +49,23 @@ class Notification(DateTimeModel):
 
     def send_as_internal(self):
         payload = self.get_payload()
-        if self.is_system:
-            payload.update({'type': 'system_message'})
-        else:
-            payload.update({'type': 'notification_message'})
 
         send_in_app_notification.delay(
             user_id=self.user.id,
             payload=payload
         )
-    
+
     def send_as_webpush(self):
         payload = self.get_payload()
 
-        if self.is_system:
-            payload.update({'type': 'system_message'})
+        notif = Message(
+            data=payload,
+        )
+        devices = FCMDevice.objects.filter(user_id=self.user.id)
+        if devices.exists():
+            devices.send_message(notif)
         else:
-            payload.update({'type': 'notification_message'})
-
-        try:
-            notif = Message(
-                data=payload,
-            )
-            device = FCMDevice.objects.get(user_id=self.user.id)
-            device.send_message(notif)
-            print("FCM message sent!")
-        except FCMDevice.DoesNotExist as e:
-            print("User has not device!", e)
-
+            logger.warning(f"There is no fcm device for user {self.user} with id: {self.user.id}")
 
     def __str__(self) -> str:
         return str(self.title)

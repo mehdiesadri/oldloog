@@ -39,7 +39,7 @@ notificationSocket.onmessage = function (e) {
 }
 
 notificationSocket.onclose = function (e) {
-    // TODO: Alert to check internet connection!
+    // TODO: Alert to check internet connection and re-connect after few seconds!
     console.log(e);
 }
 
