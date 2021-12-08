@@ -7,6 +7,10 @@ if (location.protocol !== 'https:') {
 const AUDIO = new Audio("https://assets.mixkit.co/sfx/preview/mixkit-positive-notification-951.mp3");
 AUDIO.load();
 
+const notificationSocket = new WebSocket(
+    wsProtocol + window.location.host + '/ws/notifications/'
+);
+
 // Initialize Firebase
 const firebaseConfig = {
     apiKey: "AIzaSyDGRGwxGQ5irefOaJyYX3Neoh7NU8O1M2Q",
@@ -19,10 +23,25 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
-console.log("Firebase Initialized...");
 
 // Firebase Messaging Service
 const messaging = firebase.messaging();
+
+notificationSocket.onmessage = function (e) {
+    let data = JSON.parse(e.data);
+    if (data.type === 'system_message') {
+        if (data.title === "REDIRECT") {
+            if (window.location.href !== data.url) {
+                window.location.href = data.url;
+            }
+        }
+    }
+}
+
+notificationSocket.onclose = function (e) {
+    // TODO: Alert to check internet connection!
+    console.log(e);
+}
 
 function notification_click(id, url) {
     $.ajax({
@@ -141,6 +160,7 @@ function setTokenSentToServer(sent) {
     }
 }
 
+
 function requestPermission() {
     messaging.requestPermission().then(function () {
         console.log("Has permission!");
@@ -151,9 +171,7 @@ function requestPermission() {
 }
 
 function resetUI() {
-    console.log("In reset ui");
     messaging.getToken().then(function (currentToken) {
-        console.log(currentToken);
         if (currentToken) {
             sendTokenToServer(currentToken);
         } else {
@@ -195,6 +213,21 @@ $('document').ready(function () {
         }
     });
 
+    // Get Notifications
+    $.ajax({
+        url: '/api/notifications/v1/notifications/',
+        method: 'GET',
+        success: function (data) {
+            $("#notificationCount").text(data.length);
+            data.forEach(notification => {
+                add_notification(notification);
+            });
+        },
+        error: function (error) {
+            console.error(error);
+        }
+    });
+
     messaging.onTokenRefresh(function () {
         messaging.getToken().then(function (refreshedToken) {
             console.log("Token refreshed.");
@@ -213,41 +246,27 @@ $('document').ready(function () {
         let data = payload.data;
         console.log("Message received. ", data);
 
-        switch (data.type) {
-            case 'system_message':
-                if (data.title === "REDIRECT") {
-                    if (window.location.href !== data.url) {
-                        window.location.href = data.url;
-                    }
-                } else if (data.title === "NEW_LOOG") {
-                    // Play and show popup
-                    new Audio("https://assets.mixkit.co/sfx/preview/mixkit-positive-notification-951.mp3").play();
+        // Play and show popup
+        new Audio("https://assets.mixkit.co/sfx/preview/mixkit-positive-notification-951.mp3").play();
 
-                    Swal.fire({
-                        titleText: 'New loog is available!',
-                        text: data.body,
-                        imageUrl: data.icon_url,
-                        imageAlt: 'user-profile',
-                        showDenyButton: true,
-                        confirmButtonText: 'Accept',
-                        denyButtonText: 'Reject',
-                    }).then((result) => {
-                        /* Read more about isConfirmed, isDenied below */
-                        if (result.isConfirmed) {
-                            window.location.href = data.url;
-                        }
-                    })
-                }
-                break;
-
-            case 'notification_message':
-                add_notification(data);
-                break;
-            default:
-                console.log(data);
-                break;
-        }
+        Swal.fire({
+            titleText: 'New loog is available!',
+            text: data.body,
+            imageUrl: data.icon_url,
+            imageAlt: 'user-profile',
+            showDenyButton: true,
+            confirmButtonText: 'Accept',
+            denyButtonText: 'Reject',
+        }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+                window.location.href = data.url;
+            }
+        });
     });
 
+
     requestPermission();
+
+
 });
