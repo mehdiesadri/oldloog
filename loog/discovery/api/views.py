@@ -64,7 +64,7 @@ class SearchUserAPI(generics.ListAPIView):
         if self.request.user.id in user_score:
             user_score.pop(self.request.user.id)
         payload = {
-            'title': 'NEW_LOOG',
+            'title': 'NEW LOOG',
             'body': f'User: {user}, Query: {query}',
             'url': session_obj.get_absolute_url(),
             'icon_url': self.request.user.profile.get_avatar()

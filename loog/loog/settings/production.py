@@ -3,6 +3,7 @@ from .base import *
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
+
 sentry_sdk.init(
     dsn="https://c900a96de2394b15ba37d5992a0c8c55@o991122.ingest.sentry.io/5948062",
     integrations=[DjangoIntegration()],
@@ -37,9 +38,9 @@ DATABASES = {
 # SMTP: For sending email to users
 # https://docs.djangoproject.com/en/3.2/topics/email/
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_USE_TLS = True
+EMAIL_USE_SSL = True
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
+EMAIL_PORT = 465
 EMAIL_HOST_USER = DEFAULT_FROM_EMAIL
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD', 'wrong-password')
 
