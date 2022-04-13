@@ -1,3 +1,5 @@
+LOOG: Ask a question, ask for suggestions, feedback, or opinions about a topic, a product/brand or a photo and get real time conversational responses from relevant informed souls.
+
 ## Tech Stack
 - Python
 - Django
