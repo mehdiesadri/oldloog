@@ -1,6 +1,6 @@
 LOOG: Ask a question, ask for suggestions, feedback, or opinions about a topic, a product/brand or a photo and get real time conversational responses from relevant informed souls.
 
-Loog (the name comes from Dialogue) is a human-based search where you search for a query and some keywords or tags. In response, the system connects you to people who have been tagged with those keywords based on the quality and quantity of their dialogues in the past.
+Loog (the name comes from Dialogue) is a human-based search where you search for a query, some keywords or tags. In response, the system connects you to people who have been tagged with those keywords based on the quality and quantity of their dialogues in the past.
 
 Eventually, we will provide a rest api (and JS) so that Loog can be accessed from anywhere on the web. For example, if someone is reading a news article and wants to talk about it, there will be a Loog link next to the URL (or any other content with text or appropriate metadata) that will take the user to Loog. We will use the text/metadata to automatically generate tags and start a conversation! Loog will initiate a dialogue via a tweet, news article, Wikipedia page, a research paper, etc. It also integrates with e-commerce services so that shoppers can instantly have a chat about the product or category they are reviewing.
 
