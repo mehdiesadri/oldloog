@@ -12,7 +12,7 @@ RUN apk add py-cryptography
 RUN apk add gcc musl-dev libffi-dev openssl-dev python3-dev zlib-dev jpeg-dev
 RUN apk add build-base mysql-dev bash cargo
 
-RUN pip install -r requirements.txt
+RUN pip install -r requirements/production.txt
 
 COPY ./entrypoint.sh ./entrypoint.sh
 COPY . .
