@@ -167,9 +167,9 @@ AUTHLIB_OAUTH_CLIENTS = {
 # Celery
 REDIS_HOST = os.environ.get("REDIS_HOST", "localhost")
 REDIS_PORT = os.environ.get("REDIS_PORT", 6379)
-REDIS_URI = os.environ.get("REDIS_URI", f"redis://{REDIS_HOST}:{REDIS_PORT}/0")
-CELERY_BROKER_URL = REDIS_URI
-CELERY_RESULT_BACKEND = REDIS_URI
+
+CELERY_BROKER_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}"
+CELERY_RESULT_BACKEND = f"redis://{REDIS_HOST}:{REDIS_PORT}"
 
 # Celery heart beat
 CELERY_BEAT_SCHEDULE = {
@@ -185,7 +185,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [REDIS_URI, ],
+            "hosts": [(REDIS_HOST, REDIS_PORT), ],
         },
     },
 }
