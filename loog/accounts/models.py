@@ -73,7 +73,7 @@ class InvitedUser(DateTimeModel):
     comma_separated_tags = models.CharField(verbose_name=_("Comma Separated Tags"), max_length=1024)
 
     def send_invitation_email(self, host_name="127.0.0.1:8000"):
-        return send_email.delay(
+        return send_email(
             "Invitation Letter",
             f"You have been invited to Loog Project by {self.inviter}, "
             + f"You register link is: {host_name}{self.get_invite_link()}",

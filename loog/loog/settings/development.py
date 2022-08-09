@@ -2,6 +2,7 @@ from .base import *
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+CELERY_ENABLED = False
 
 MEDIA_ROOT = BASE_DIR / 'media'
 

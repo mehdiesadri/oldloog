@@ -41,7 +41,7 @@ class Notification(DateTimeModel):
         return payload
 
     def send_as_email(self):
-        send_email.delay(
+        send_email(
             subject=self.title,
             message=self.body,
             receivers=[self.user.email, ]
@@ -50,7 +50,7 @@ class Notification(DateTimeModel):
     def send_as_internal(self):
         payload = self.get_payload()
 
-        send_in_app_notification.delay(
+        send_in_app_notification(
             user_id=self.user.id,
             payload=payload
         )

@@ -164,10 +164,12 @@ AUTHLIB_OAUTH_CLIENTS = {
 }
 
 
-# Celery
+# Redis
 REDIS_HOST = os.environ.get("REDIS_HOST", "localhost")
 REDIS_PORT = os.environ.get("REDIS_PORT", 6379)
 
+# Celery
+CELERY_ENABLED = True
 CELERY_BROKER_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}"
 CELERY_RESULT_BACKEND = f"redis://{REDIS_HOST}:{REDIS_PORT}"
 
