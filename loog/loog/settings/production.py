@@ -20,6 +20,7 @@ sentry_sdk.init(
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
+CELERY_ENABLED = True
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
