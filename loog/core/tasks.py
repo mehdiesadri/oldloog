@@ -19,7 +19,7 @@ def _send_email(*args, **kwargs):
 @shared_task
 def _send_in_app_notification(user_id: int, payload: dict):
     channel_layer = get_channel_layer()
-
+    # TODO: Dedicate a specific channel for notifications!
     async_to_sync(channel_layer.group_send)(
         f"chat_{user_id}", payload
     )

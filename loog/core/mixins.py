@@ -7,7 +7,9 @@ from discovery.models import TagAssignment
 
 
 class ProfileRequiredMixin(LoginRequiredMixin):
-    """Verify that the current user has a complete profile."""
+    """
+    Verify that the current user has a complete profile.
+    """
 
     def dispatch(self, request, *args, **kwargs):
         response = super().dispatch(request, *args, **kwargs)
