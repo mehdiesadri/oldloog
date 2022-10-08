@@ -6,6 +6,10 @@ from accounts.models import User
 from core.models import DateTimeModel
 
 
+CHAT_FIRST_LOGIN_DEADLINE = 30  # seconds
+CHAT_SESSION_TIMEOUT = 330  # seconds
+
+
 class ChatSession(DateTimeModel):
     query = models.CharField(verbose_name="query", max_length=1024)
     room_name = models.CharField(max_length=12, unique=True)
@@ -15,14 +19,14 @@ class ChatSession(DateTimeModel):
 
     @property
     def is_open_for_first_join(self):
-        return (timezone.now() - self.created_at).seconds < 30
+        return (timezone.now() - self.created_at).seconds < CHAT_FIRST_LOGIN_DEADLINE
 
     @property
     def is_expired(self):
         return self.get_expire_datetime() < timezone.now()
 
     def get_expire_datetime(self):
-        return self.created_at + timezone.timedelta(seconds=330)
+        return self.created_at + timezone.timedelta(seconds=CHAT_SESSION_TIMEOUT)
 
     def get_absolute_url(self):
         return reverse("chat:join-session", kwargs={"room_name": self.room_name})
@@ -66,6 +70,12 @@ class Message(DateTimeModel):
     )
     text = models.CharField(max_length=512)
     attachment = models.FileField(upload_to="chats/", blank=True, null=True)
+
+    @property
+    def has_attachment(self) -> bool:
+        if self.attachment:
+            return True
+        return False
 
     def __str__(self):
         return str(self.id)

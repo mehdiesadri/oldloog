@@ -4,6 +4,8 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 
+# TODO: Write unit tests!
+
 class MessageApiTestCase(APITestCase):
     def setUp(self):
         self.test_user1 = User.objects.create(username='u1')
