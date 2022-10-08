@@ -3,7 +3,7 @@ from django.test import TestCase
 
 from chat.models import ChatSession
 
-
+# TODO: Double check unit tests!
 class ChatSessionTestCase(TestCase):
     """
     Tests the login behind the ChatSession Model.

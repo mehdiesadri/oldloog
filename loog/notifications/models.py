@@ -1,17 +1,14 @@
-import logging
 from django.db import models
 
 from accounts.models import User
 from core.models import DateTimeModel
 from core.tasks import send_email, send_in_app_notification
 
-from firebase_admin.messaging import Notification as FirebaseNotification, Message
-from fcm_django.models import FCMDevice
-
-logger = logging.getLogger(__name__)
-
 
 class Notification(DateTimeModel):
+    """
+    For saving and handling user/system notifications!
+    """
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     read = models.BooleanField(default=False)
 
@@ -56,16 +53,16 @@ class Notification(DateTimeModel):
         )
 
     def send_as_webpush(self):
-        payload = self.get_payload()
+        # TODO: Implement webpush notification!
+        raise NotImplementedError("The webpush notification is not supported yet!")
 
-        notif = Message(
-            data=payload,
-        )
-        devices = FCMDevice.objects.filter(user_id=self.user.id)
-        if devices.exists():
-            devices.send_message(notif)
-        else:
-            logger.warning(f"There is no fcm device for user {self.user} with id: {self.user.id}")
+    def send(self):
+        if self.is_email:
+            self.send_as_email()
+        if self.is_internal:
+            self.send_as_internal()
+        if self.is_webpush:
+            self.send_as_webpush()
 
     def __str__(self) -> str:
         return str(self.title)

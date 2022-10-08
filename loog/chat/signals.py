@@ -19,7 +19,7 @@ def chat_notification(sender, instance, created, **kwargs):
             "message": "chat",
             "data": MessageSerializer(instance=instance).data
         }
-
+        # TODO: use Notification model instead!
         channel_layer = get_channel_layer()
 
         async_to_sync(channel_layer.group_send)(

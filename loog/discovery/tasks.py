@@ -1,7 +1,6 @@
 from django.utils import timezone
 
 from celery.utils.log import get_task_logger
-from nltk.util import pr
 
 from loog.celery import app
 from .utils import update_inverted_index, redis_db

@@ -11,9 +11,4 @@ def send_notification(sender, instance, created, *args, **kwargs):
     Sends alerts, emails, etc when a new notification is created.
     """
     if created:
-        if instance.is_email:
-            instance.send_as_email()
-        if instance.is_internal:
-            instance.send_as_internal()
-        if instance.is_webpush:
-            instance.send_as_webpush()
+        instance.send()
